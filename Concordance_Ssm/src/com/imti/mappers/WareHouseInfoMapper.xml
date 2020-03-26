@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.WareHouseInfoDao">
+	
+	<!-- 查询所有回收钻出入库信息 -->
+	<select id="findAllWareHouseInfo" parameterType="Map" resultType="Productinfo">
+		select
+			pr.pr_id,
+			pr.rco_id,
+			rco.rco_ids,
+			pr.re_id,
+			re.re_name,
+			pr.pr_entryTime,
+			pr.pr_weight,
+			pr.pr_state,
+			pr.pr_delflag,
+			pr.pr_createTime,
+			pr.pr_opt_id,
+			pr.pr_remark
+		from
+			t_productinfo pr
+		inner join
+			t_recycleorder rco
+		on
+			pr.rco_id = rco.rco_id
+		inner join
+			t_recycle re
+		on
+			pr.re_id = re.re_id
+		where
+			pr.pr_delflag = 0
+		<if test="searchByName != null and searchByName != ''">
+		and
+			rco.rco_ids like concat('%',#{searchByName},'%')
+		</if>
+		order by pr.pr_createTime desc
+		limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	
+	<!-- 查询所有回收站出入库的总条数，用于分页 -->
+	<select id="findAllWareHouseInfoCount" parameterType="Map" resultType="Integer">
+		select
+			count(pr.pr_delflag)
+		from
+			t_productinfo pr
+		inner join
+			t_recycleorder rco
+		on
+			pr.rco_id = rco.rco_id
+		where
+			pr.pr_delflag = 0
+		<if test="searchByName != null and searchByName != ''">
+		and
+			rco.rco_ids like concat('%',#{searchByName},'%')
+		</if>
+	</select>
+	
+	<!-- 新增入库信息 -->
+	<insert id="addWareHouseInfo" parameterType="Productinfo">
+		insert into
+			t_productinfo(
+				pr_id,
+				rco_id,
+				re_id,
+				pr_entryTime,
+				pr_weight,
+				pr_state,
+				pr_delflag,
+				pr_createTime,
+				pr_opt_id,
+				pr_remark
+			) values(
+				#{pr_id},
+				#{rco_id},
+				#{re_id},
+				#{pr_entryTime},
+				#{pr_weight},
+				#{pr_state},
+				#{pr_delflag},
+				#{pr_createTime},
+				#{pr_opt_id},
+				#{pr_remark}
+			)
+	</insert>
+	
+	<!-- 修改回收站出入库的信息的sql语句 -->
+	<update id="updateWareHouseInfo" parameterType="Productinfo">
+		update
+			t_productinfo
+		set
+			rco_id = #{rco_id} ,
+			re_id = #{re_id} ,
+			pr_entryTime = #{pr_entryTime} ,
+			pr_weight = #{pr_weight} ,
+			pr_state = #{pr_state} ,
+			pr_delflag = #{pr_delflag} ,
+			pr_createTime = #{pr_createTime} ,
+			pr_opt_id = #{pr_opt_id} ,
+			pr_remark = #{pr_remark} 
+		where
+			pr_id = #{pr_id}
+	</update>
+	
+	<!-- 删除回收站出入库信息的sql语句 -->
+	<update id="deleteWareHouseInfo" parameterType="Integer">
+		update
+			t_productinfo
+		set
+			pr_delflag = 1
+		where
+			pr_id = #{pr_id}
+	</update>
+</mapper>

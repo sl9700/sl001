@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.RecycleOrderDao">
+
+
+	<select id="findAllRecycleOrder" parameterType="Map" resultType="RecycleOrder">
+	select
+			rco.rco_id,
+			rco.us_id,
+			rco.em_id,
+			rco.ve_id,
+			rco.rco_ids,
+			rco.rco_type,
+			rco.rco_birthTime,
+			rco.rco_accomplishTime,
+			rco.rco_name,
+			rco.rco_phone,
+			rco.rco_address,
+			rco.rco_rubbishSrc,
+			rco.rco_trading,
+			rco.rco_orderTime,
+			rco.rco_garbageWeight,
+			rco.rco_integral,
+			rco.rco_state,
+			rco.rco_delflag,
+			rco.rco_createTime,
+			rco.rco_opt_id,
+			rco.rco_remark,
+			em.em_name,
+			us.us_name,
+			ve.ve_license
+		from 
+			t_recycleorder rco
+		inner join
+			t_userinfo us
+		on
+			rco.us_id=us.us_id
+		inner join
+			t_employeeinfo em
+		on
+			em.em_id=rco.em_id
+		inner join
+			t_vehicleinfo ve
+		on
+			ve.ve_id=rco.ve_id
+		where
+			rco.rco_delflag=0
+		<if test="searchByName != null and searchByName != ''">
+		and
+			rco.rco_name
+		like
+			concat('%',#{searchByName},'%')
+		</if>
+		limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	
+	<select id="findAllRecycleOrderCount" resultType="Integer" parameterType="Map">
+		select
+			count(*)
+		from 
+			t_recycleorder
+		where 
+			rco_delflag=0
+		<if test="searchByName != null and searchByName != ''">
+		and
+			rco_name
+		like
+			concat('%',#{searchByName},'%')
+		</if>
+	</select>
+	
+	<insert id="addRecycleOrder" parameterType="RecycleOrder">
+		insert into
+			t_recycleorder(
+				us_id,
+				em_id,
+				ve_id,
+				rco_ids,
+				rco_type,
+				rco_birthTime,
+				rco_accomplishTime,
+				rco_name,
+				rco_phone,
+				rco_address,
+				rco_trading,
+				rco_garbageWeight,
+				rco_integral,
+				rco_state,
+				rco_opt_id,
+				rco_remark
+			) values(
+				#{us_id},
+				#{em_id},
+				#{ve_id},
+				#{rco_ids},
+				#{rco_type},
+				#{rco_birthTime},
+				#{rco_accomplishTime},
+				#{rco_name},
+				#{rco_phone},
+				#{rco_address},
+				#{rco_trading},
+				#{rco_garbageWeight},
+				#{rco_integral},
+				#{rco_state},
+				#{rco_opt_id},
+				#{rco_remark}
+			)
+		
+	</insert>
+	
+	
+	<update id="updateRecycleOrder" parameterType="RecycleOrder">
+		update
+			t_recycleorder
+		<set>
+			rco_id=#{rco_id},
+			us_id=#{us_id},
+			em_id=#{em_id},
+			ve_id=#{ve_id},
+			rco_ids=#{rco_ids},
+			rco_type=#{rco_type},
+			rco_birthTime=#{rco_birthTime},
+			rco_accomplishTime=#{rco_accomplishTime},
+			rco_name=#{rco_name},
+			rco_phone=#{rco_phone},
+			rco_address=#{rco_address},
+			rco_trading=#{rco_trading},
+			rco_garbageWeight=#{rco_garbageWeight},
+			rco_integral=#{rco_integral},
+			rco_remark=#{rco_remark}
+		</set>
+		<where>
+			rco_id=#{rco_id}
+		</where>
+	</update>
+	
+	
+	<update id="deleteRecycleOrder" parameterType="Integer">
+		update 
+			t_recycleorder
+		set
+			rco_delflag=1
+		where 
+			rco_id=#{rco_id}
+	</update>
+</mapper> 

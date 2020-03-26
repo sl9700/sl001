@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.RoleInfoDao">
+	<!-- 查询当前用户所拥有的菜单信息，用于加载主页面的菜单信息展示 -->
+	<select id="findMenuIdsByRoleId" resultType="String" parameterType="Integer">
+		select ro_menuids from t_roleInfo where ro_delflag=0 and ro_id=#{roleId}
+	</select>
+	<!-- 查找所有菜单信息用于展示 -->
+	<select id="findAllRoleInfo" resultType="RoleInfo" parameterType="Map">
+		select
+			ro_id,
+			ro_menuids,
+			ro_name,
+			ro_state,
+			ro_delflag,
+			ro_createTime,
+			ro_opt_id,
+			ro_remark
+		from
+			t_roleInfo
+		where
+			ro_delflag=0
+		<if test="s_roleName!=null and s_roleName!=''">
+		and
+			ro_name like concat('%',#{s_roleName},'%')
+		</if>
+		limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	<!-- 查找所用菜单信息的行数，用于分页 -->
+	<select id="findAllRoleInfoCount" resultType="Integer" parameterType="Map">
+		select
+			count(*)
+		from
+			t_roleInfo
+		where
+			ro_delflag=0
+		<if test="s_roleName!=null and s_roleName!=''">
+		and
+			ro_name like concat('%',#{s_roleName},'%')
+		</if>
+	</select>
+	<!-- 验证当前新增的角色是否已存在 -->
+	<select id="emRoleNameIsExist" parameterType="Map" resultType="Integer">
+		select
+			count(ro_name)
+		from
+			t_roleInfo
+		where
+			ro_delflag=0
+		and
+			ro_name = #{ro_name}
+	</select>
+	<!-- 修改与新增时的保存按钮 -->
+	<insert id="saveRoleInfo" parameterType="RoleInfo">
+		insert into
+			t_roleInfo(
+				ro_name,
+				ro_state,
+				ro_delflag,
+				ro_createTime,
+				ro_opt_id,
+				ro_remark
+			) values(
+				#{ro_name},
+				#{ro_state},
+				#{ro_delflag},
+				#{ro_createTime},
+				#{ro_opt_id},
+				#{ro_remark}
+			)
+	</insert>
+	<!-- 修改角色信息的sql语句 -->
+	<update id="updateRoleInfo" parameterType="RoleInfo">
+		update
+			t_roleInfo
+		set
+			ro_name = #{ro_name},
+			ro_remark = #{ro_remark}
+		where
+			ro_id = #{ro_id}
+	</update>
+	<!-- 删除角色信息的sql语句 -->
+	<update id="deleteRoleInfo" parameterType="Integer">
+		update
+			t_roleInfo
+		set
+			ro_delflag = 1
+		where
+			ro_id = #{ro_id}
+	</update>
+	<!-- 新增用户时为角色赋予角色的下拉框信息展示sql语句 -->
+	<select id="roldIsUse" parameterType="Integer" resultType="String">
+		select
+			ro.ro_name
+		from
+			t_employeeinfo em
+		inner join
+			t_roleInfo ro
+		on
+			em.ro_id = ro.ro_id
+		where
+			em.ro_id = #{ro_id}
+	</select>
+	<!-- 角色授权时确认授权按钮的sql语句 -->
+	<update id="saveAuth" parameterType="Map">
+		update
+			t_roleInfo
+		set
+			ro_menuids = #{mn_menuIds}
+		where
+			ro_id = #{ro_id}
+	</update>
+</mapper>

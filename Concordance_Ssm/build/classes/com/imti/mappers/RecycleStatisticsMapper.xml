@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.RecycleStatisticsDao">
+	<!-- 多表联查 -->
+	<select id="findAllRecycleStatistics" parameterType="Map" resultType="RecycleStatistics">
+		SELECT 
+			re.re_id,
+			re_name,
+			re_createTime,
+			co_name,
+			rs_empsum,
+			rs_ordersum,
+			rs_recyclesum,
+			rs_storagesum 
+		FROM 
+			t_community,t_recycle 
+		AS re
+		LEFT JOIN (
+  		SELECT 
+  			re_id,
+  			COUNT(rem_id) 
+  		AS rs_empsum
+  		FROM 
+  			t_recycleemployeeinfo
+  		WHERE  
+  			rem_delFlag=0
+ 		GROUP BY 
+ 			re_id
+		) AS es
+		ON 
+			re.re_id=es.re_id
+		LEFT JOIN (
+  		SELECT 
+  			t_recycleOrder.re_id,COUNT(t_recycleOrder.rco_id) AS rs_ordersum,SUM(rco_garbageWeight) AS rs_recyclesum,SUM(pr_weight) AS rs_storagesum
+ 	 	FROM 
+ 	 		t_recycleOrder
+  		INNER JOIN 
+  			t_productInfo
+  		ON 
+  			t_recycleOrder.re_id=t_productInfo.re_id
+ 	 	WHERE 
+ 	 		rco_state=2 
+ 	 	AND 
+ 	 	TO_DAYS(NOW()) - TO_DAYS(rco_accomplishTime) >= 30 AND TO_DAYS(NOW()) - TO_DAYS(pr_entryTime) >= 30
+  		GROUP BY 
+  			re_id
+		) AS os
+		ON 
+			re.re_id=os.re_id
+		WHERE 
+			re_delFlag=0 
+		AND 
+			co_delFlag=0 
+		AND 
+			re.co_id=t_community.co_id
+
+	</select>
+	<!-- 分页 -->
+		<select id="findAllRecycleStatisticsCount" parameterType="Map" resultType="Integer">
+		select 
+			count(*) 
+		from 
+			t_community,t_recycle,t_recycleemployeeinfo,t_recycleOrder
+		where 
+			re_delFlag=0 
+		AND
+			co_delFlag=0 
+		and
+			rem_delFlag=0
+		and
+			rco_delFlag=0
+		<if test="searchByName!=null and searchByName!=''">
+				and re_name like concat('%',#{co_name},'%')
+		</if>	
+	</select>
+	
+</mapper> 

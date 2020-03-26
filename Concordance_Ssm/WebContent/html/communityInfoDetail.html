@@ -1,0 +1,222 @@
+<!DOCTYPE html>  
+<html>  
+<head> 
+	
+    <meta charset="UTF-8">
+		<title>小区管理</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+</head>  
+<body class="easyui-layout">
+	<!-- 小区详情 -->
+	<div data-options="region:'west'" style="width: 450px;height: 100px">
+		<table class="easyui-datagrid" id="communityInfoDetailGrid" style="width:100%;" data-options="
+																fitColumns:true,
+																pagination:true,
+																rownumbers:true,
+																toolbar:'#tb',
+																fit:true,
+																url:'../CommunityInfoDetail/findAllCommunityInfoDetail.action'">
+			
+			<!-- 投标管理信息datagrid START -->
+			<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true" align="center"></th>
+					<th data-options="field:'co_name',width:100" align="center">小区名称</th>
+					<th data-options="field:'cd_unit',width:100" align="center">单元号</th>
+					<th data-options="field:'cd_unitNumber',width:100" align="center">单元户数</th>
+					<th data-options="field:'cd_unitLayer',width:100" align="center">单元层数</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	<div  data-options="region:'center'" >
+					<div data-options="region:'east'"  id="allmap" style="width: 100%;height: 90%"></div>
+					<a style="width: 19%; id="btn" href="javascript:updatecommunityInfoDetail()" class="easyui-linkbutton">小区详情修改</a>
+					<a style="width: 19%; id="btn" href="javascript:delectcommunityInfoDetail()" class="easyui-linkbutton">小区详情删除</a>
+					<a style="width: 19%; id="btn" href="javascript:newcommunityInfo()" class="easyui-linkbutton">试点小区新增</a>
+					<a style="width: 19%; id="btn" href="javascript:updatecommunity()" class="easyui-linkbutton">试点小区修改</a>
+					<a style="width: 19%; id="btn" href="javascript:deletecommunity()" class="easyui-linkbutton">试点小区删除</a>
+	</div>
+	<!-- 试点小区 -->
+	<div data-options="region:'south'" style="width: 900px;height: 247px;">
+		<table class="easyui-datagrid" id="communityGrid" style="width:100%;height: 100px;" data-options="
+																fitColumns:true,
+																pagination:true,
+																rownumbers:true,
+																toolbar:'#tb',
+																fit:true,
+																url:'../community/findAllCommunity.action'">
+			
+			
+			<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true" align="center"></th>
+					<th data-options="field:'co_id',width:100" align="center">小区编号</th>
+					<th data-options="field:'co_name',width:100" align="center">小区名称</th>
+					<th data-options="field:'co_address',width:100" align="center">小区详情地址</th>
+					<th data-options="field:'co_coordinate',width:100" align="center">小区具体坐标点</th>
+					<th data-options="field:'co_residential',width:100" align="center">区域坐标</th>
+					<th data-options="field:'co_beginTime',width:100" align="center">试点开始时间</th>
+					<th data-options="field:'co_principal',width:100" align="center">小区负责人</th>
+					<th data-options="field:'co_tel',width:100" align="center">负责人联系方式</th>
+					<th data-options="field:'co_population',width:100" align="center">小区覆盖人口</th>
+					<th data-options="field:'co_type',width:100" align="center">小区类型</th>
+					<th data-options="field:'em_name',width:100" align="center">项目负责人</th>
+					<th data-options="field:'co_remark',width:100" align="center">备注</th>
+				</tr>
+			</thead>
+		</table>
+	</div>	
+	
+	<!--小区信息表单-->
+	<div id="dlgcommunityInfoDetail" style="height: 180px;width: 500px;" class="easyui-dialog"data-options="closed:true,modal:true" >
+   		<form id="fmCommunityInfoDetail" method="post">
+			  <table cellspacing="5px;">
+				<p><input type="hidden" id="co_id" name="co_id" /></p>
+				<p><input type="hidden" id="cd_id" name="cd_id" /></p>
+				<tr>
+						<td height="35px">&nbsp;小区名称：</td>
+					    <td><input type="text" id="co_name" name="co_name" class="easyui-validatebox" data-options="required:true"  readonly="readonly"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>&nbsp;单元号：</td>
+					    <td><input type="text" id="cd_unit" name="cd_unit" class="easyui-validatebox" data-options="required:true"/></td>
+				</tr>
+				<tr>
+						<td></td>
+						<td></td>
+				</tr>
+				<tr>
+						<td height="35px">&nbsp;单元户数：</td>
+					    <td><input type="text" id="cd_unitNumber" name="cd_unitNumber" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>&nbsp;单元层数：</td>
+					    <td><input type="text" id="cd_unitLayer" name="cd_unitLayer" class="easyui-validatebox" data-options="required:true"/></td>
+				</tr>
+				
+				<tr>
+						<td height="35px"></td>
+					    <td><a href="javascript:savecommunityInfoDetail()" class="easyui-linkbutton">保存</a></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td></td>
+					    <td><a href="javascript:closecommunityInfoDetail()" class="easyui-linkbutton">关闭</a></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	
+	<!-- 试点小区表单 -->
+	<div id="dlgcommunity" class="easyui-dialog"data-options="closed:true,modal:true" style="width:1000px; height: 440px;">
+		<div data-options="region:'north'"  id="allmaps" style="height: 255px;"></div>
+			<form id="fmtenderContractInfo" method="post">
+			<center>
+			<table >
+				  <p><input type="hidden" id="co_projectLeader" name="co_projectLeader" /></p>
+			      <p><input type="hidden" id="co_id" name="co_id" /></p>
+			        <thead>
+			            <tr>
+			                <th data-options="field:'itemid',width:150">小区名称</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="co_name" name="co_name">
+			                </th>
+			                <th data-options="field:'itemid',width:150">小区详情地址</th>
+			                <th data-options="field:'co_address',width:150">
+			                	<input id="co_address"name="co_address">
+			                </th>
+			                <th data-options="field:'itemid',width:150">小区具体坐标点</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="co_coordinate" name="co_coordinate">
+			                </th>
+			            </tr>
+			            <tr>
+			                <th data-options="field:'itemid',width:150">区域坐标</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="co_residential" name="co_residential">
+			                </th>
+			                <th data-options="field:'itemid',width:150">试点开始时间</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input type="text" id="co_beginTime" name="co_beginTime"class="easyui-datebox" data-options="required:true"/>
+			                </th>
+			                <th data-options="field:'itemid',width:150">小区负责人</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="co_principal" name="co_principal">
+			                </th>
+			            </tr>
+			            <tr>
+			                <th data-options="field:'itemid',width:150">负责人联系方式</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="co_tel" name="co_tel">
+			                </th>
+			                <th data-options="field:'itemid',width:150">小区覆盖人口</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="co_population" name="co_population">
+			                </th>
+			                <th data-options="field:'itemid',width:150">小区类型</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="co_type" name="co_type">
+			                </th>
+			            </tr>
+			            <tr>
+			                <th data-options="field:'itemid',width:150">项目负责人</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="em_names" name="em_names" readonly="readonly">
+			                </th>
+			                <th data-options="field:'itemid',width:150">备注</th>
+			                <th data-options="field:'itemid',width:150">
+			                	<input id="co_remark" name="co_remark">
+			                </th>
+			                <th data-options="field:'itemid',width:150"></th>
+			                <th data-options="field:'itemid',width:150">
+			                <a href="javascript:openCommunityDialog()" class="easyui-linkbutton">选择项目负责人</a>
+			                </th>
+			            </tr>
+			            <tr>
+			            	<th type="hidden" data-options="field:'co_id',width:150"></th>
+			            	<th data-options="field:'itemid',width:150">
+			            		<a href="javascript:newCommunityInfo()" class="easyui-linkbutton">确认</a>
+			            	</th>
+			            	<th data-options="field:'itemid',width:150"></th>
+			            	<th data-options="field:'itemid',width:150">
+			            		<a href="javascript:closecommunity()" class="easyui-linkbutton">关闭</a>
+			            	</th>
+			            	<th data-options="field:'itemid',width:150"></th>
+			            	<th data-options="field:'itemid',width:150"></th>
+			            </tr>
+			        </thead>
+			    </table>	
+			    </center>	
+		</form>
+	</div>
+		<!--选择项目负责人-->
+	<div id="dlgemployeeInfo" class="easyui-dialog" data-options="iconCls:'icon-search',closed:true,buttons:'#dlg3-buttons',modal:true"  style="width: 500px;height: 480px;padding: 10px 20px">
+	       <div style="height: 40px" align="center">
+				项目负责人：<input type="text" id="searchByName" name="searchByName" onkeydown="if(event.keyCode==13) searchRole()"/>
+		  		<a href="javascript:searchEmployeeInfoByName()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+		   </div>
+			<div style="height: 350px;">
+				<table id="dgemployeeInfo" title="查询结果" class="easyui-datagrid" data-options="fitColumns:true,pagination:true,rownumbers:true,fit:true,singleSelect:true,url:'../employeeInfo/findAllEmployeeInfo.action'">
+				    <thead>
+					<tr>
+						  <th data-options="field:'ck',checkbox:true,width:50," align="center"></th>
+						  <th data-options="field:'em_id',width:'50'," align="center">编号</th>
+					      <th data-options="field:'em_name',width:'50'," align="center">角色名称</th>
+					      <th data-options="field:'em_remark',width:'50'," align="center">备注</th>
+					 </tr>
+				     </thead>
+				 </table>
+			</div>
+	</div>
+	<!-- 项目负责人按钮 -->
+	<div id="dlg3-buttons">
+	      <a href="javascript:chooseemployee()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+	      <a href="javascript:closeemployeeDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div>
+	<script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=k2u5EEAbBWd6Arvrymrn8hs5"></script>
+	<script type="text/javascript" src="../gbmjs/communityInfoDetail.js"></script>
+</body>  
+</html>

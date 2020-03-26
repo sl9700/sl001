@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>回收站管理</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	    <script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=k2u5EEAbBWd6Arvrymrn8hs5"></script>
+	   	<!--加载鼠标绘制工具-->
+		<script type="text/javascript" src="//api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+		<link rel="stylesheet" href="//api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+		<!--加载检索信息窗口-->
+		<script type="text/javascript" src="//api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
+		<link rel="stylesheet" href="//api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
+	    <style type="text/css">
+				body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
+				#allmap {width: 100%; height:500px; overflow: hidden;}
+				#result {width:100%;font-size:12px;}
+				dl,dt,dd,ul,li{
+					margin:0;
+					padding:0;
+					list-style:none;
+				}
+				p{font-size:12px;}
+				dt{
+					font-size:14px;
+					font-family:"微软雅黑";
+					font-weight:bold;
+					border-bottom:1px dotted #000;
+					padding:5px 0 5px 5px;
+					margin:5px 0;
+				}
+				dd{
+					padding:5px 0 0 5px;
+				}
+				li{
+					line-height:28px;
+				}
+		</style>
+	</head>
+	<body>
+		<div class="easyui-layout" data-options="fit:true">
+			<div data-options="region:'north'"
+				style="height: 47px; line-height:45px; background-color: #E3E3E3; width: 1235px; background-position: initial initial; background-repeat: initial initial;">
+				<div style="float: right;">
+					回收站名称: <input class="easyui-validatebox" style="width: 80px"
+						name="r_recycleName" id="r_recycleName"> <a
+						href="javascript:searchRecycleInfo()" class="easyui-linkbutton"
+						iconCls="icon-search">查询</a>
+				</div>
+				<div>
+					<a id="recycleManager_newbtn" href="javascript:void(0)"
+						onclick="newRecycleInfo()"
+						class="easyui-linkbutton" iconCls="icon-add">新建</a>
+				    <a  id="recycleManager_editbtn" href="javascript:void(0)"
+						onclick="editRecycle()"
+						class="easyui-linkbutton" iconCls="icon-edit">修改</a> 
+					<a	id="recycleManager_delbtn" href="javascript:void(0)"
+						onclick="delRecycle()"
+						class="easyui-linkbutton" iconCls="icon-remove">删除</a> 
+				    <a	id="recycleManager_savebtn" href="javascript:void(0)"
+						onclick="saveForm()" class="easyui-linkbutton"
+						iconCls="icon-save">保存</a>
+					<a  id="recycleManager_canclebtn" href="javascript:void(0)"
+						onclick="cancleRecycle()"
+						class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
+					<a  id="recycleManager_openMap" href="javascript:void(0)"
+						onclick="openMapRecycle()"
+						class="easyui-linkbutton" iconCls="icon-search">回收站及人员定位</a>
+				</div>
+			</div>
+			<div data-options="region:'west',split:true"
+				style="width: 666px;">
+				<div class="easyui-layout" data-options="fit:true">		
+					<div data-options="region:'center'"> 		
+						<table id="dgRecycleInfo" title="回收站管理主表全部列表" class="easyui-datagrid" data-options="fitColumns:true,pagination:true,rownumbers:true,url:'../recycle/findAllRecycle.action',fit:true,singleSelect:true">
+					     	<thead>
+					     		<tr>
+									<th data-options="field:'re_name',width:100,sortable:true" align="center">回收站名称</th>
+									<th data-options="field:'re_coordinate',width:100,sortable:true" align="center">坐标</th>
+									<th data-options="field:'re_recycletime',width:100,sortable:true" align="center">开放时间</th>
+									<th data-options="field:'re_capacity',width:100,sortable:true" align="center">容量（KG）</th>
+									<th data-options="field:'re_remark',width:100" align="center">备注</th>
+								</tr>
+					   		</thead>
+					   	</table>
+					</div>	
+				</div>
+			</div>
+			
+			
+			<div data-options="region:'center'" title="回收站管理信息编辑" >
+			<!-- 百度地图的显示div -->
+			  <div id="allmap" style="overflow:hidden;zoom:1;position:relative;">	
+				<div id="map" style="height:100%;-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;"></div>
+			  </div>
+			<div id="result">
+				<input type="button" value="获取绘制的覆盖物个数" onclick="alert(overlays.length)"/>
+				<input type="button" value="清除所有覆盖物" onclick="clearAll()"/>
+			</div>
+			    
+				<div id="tab_show" align="center" style="height:308px;background-color: #F7F7F7;" >
+					<h1 align="center" style="font-size:20px">编辑框</h1>
+					<form id="recycleEditForm">
+						<input type="hidden" name="re_id" id="re_id" />
+						<!-- <input type="hidden" name="em_id" id="em_id" />
+						<input type="hidden" name="mm_id" id="mm_id" /> -->
+						<table>
+							<tr style="line-height: 30px">
+								<td><label>回收站名称：</label></td>
+								<td><input class="easyui-validatebox" type="text"
+								id="re_name" name="re_name" data-options="required:true" maxlength="20" width="200px"/></td>
+							</tr>
+							<tr style="line-height: 30px">
+								<td><label>坐标：</label></td>
+								<td><input class="easyui-validatebox" type="text"
+								id="re_coordinate" name="re_coordinate" data-options="required:true" maxlength="20" width="200px"/></td>
+							</tr>
+							<tr style="line-height: 30px">
+								<td><label>开放时间：</label></td>
+								<td><input class="easyui-datebox" type="text"
+								id="re_recycletime" name="re_recycletime" data-options="required:true" maxlength="20" width="200px"/></td>
+							</tr>
+							<tr style="line-height: 30px">
+								<td><label>容量(KG)：</label></td>
+								<td><input class="easyui-validatebox" type="text"
+								id="re_capacity" name="re_capacity" data-options="required:true" maxlength="20" width="200px"/></td>
+							</tr>
+							<tr style="line-height: 30px">
+								<td><label>备注：</label></td>
+								<td><input class="easyui-validatebox" type="text"
+								id="re_remark" name="re_remark" data-options="required:true" maxlength="200" width="200px" height="400px" /></td>
+							</tr>
+						</table>
+					</form>
+				</div>
+				<!-- 回收站人员表 START -->
+				<div style="clear: both;" ></div>
+				<div class="easyui-tabs" style="width: 100%;">
+					<div title="回收站管理人员管理信息列表" fit="true" data-options="border:true">
+						<table style="height:380px;width: 100%;" id="dgRecycleEmpDetail" class="easyui-datagrid" data-options="fitColumns:true,rownumbers:true,toolbar:'#tb'">
+					     	<thead>
+					     		<tr>
+					     			<!-- <th data-options="field:'re_id'" align="center"></th>
+					     			<th data-options="field:'em_id'" align="center"></th> -->
+									<th data-options="field:'cb',checkbox:true" align="center"></th>
+									<th data-options="field:'re_id',width:50,editor:{type:'combobox',id:'re_id',options:{
+											disabled:false,required: true,url:'../recycle/findAllNameByRecycle.action',valueField:'re_id',textField:'re_name'}},
+											formatter:function(value,row){
+													if(addDetail=='addDetail'){
+														return row.re_id;
+													}else{
+														return row.re_name;
+													}
+											}" align="center" readonly="readonly">回收站名称</th>
+									<th data-options="field:'em_id',width:50,editor:{type:'combobox',options:{
+											disabled:false,required: true,url:'../employeeInfo/findAllNameByEmp.action',valueField:'em_id',textField:'em_name'}},
+											formatter:function(value,row){
+												if(addDetail=='addDetail'){
+														return row.em_id;
+													}else{
+														return row.em_name;
+													}
+											}" align="center">内部人员名称</th>
+									<th data-options="field:'rem_obligation',width:50,editor:{type:'validatebox',options:{
+											disabled:false,required: true}}" align="center">职责</th>
+									<th data-options="field:'rem_createTime',width:50,editor:{type:'datebox',options:{
+											disabled:false,required: true}}" align="center">创建时间</th>
+									<th data-options="field:'rem_remark',width:50,editor:{type:'validatebox',options:{
+											disabled:false}}"  align="center" >备注</th>
+								</tr>
+					   		</thead>
+					   	</table>
+						<div id="tb">
+							<div>
+								<a href="javascript:wbDetailManager()" class="easyui-linkbutton" iconCls="icon-add" plain="true" id="recycleDeatilAdd">添加</a>
+								<a href="javascript:wbDetailModify()" class="easyui-linkbutton" iconCls="icon-edit" plain="true" id="recycleDeatilUpdate">修改</a>
+								<a href="javascript:wbDetailDelete()" class="easyui-linkbutton" iconCls="icon-remove" plain="true" id="recycleDeatilDel">删除</a>
+								<a href="javascript:saveWb_detail()" class="easyui-linkbutton" iconCls="icon-save" plain="true" id="recycleDeatilSav">保存</a>
+					      	</div>
+						</div>
+					</div>
+					<!-- 回收站人员表 END -->
+					
+					<!-- 回收站物资表 START -->
+					<div title="回收站管理物资类别信息列表" fit="true" data-options="border:true">
+						<table style="height:380px;width: 100%;" id="dgMaterialsDetail" class="easyui-datagrid" data-options="fitColumns:true,rownumbers:true,toolbar:'#tb2'">
+					   		<thead>
+					     		<tr>
+									<th data-options="field:'cb',checkbox:true" align="center"></th>
+									<th data-options="field:'re_id',width:50,editor:{type:'combobox',options:{
+											disabled:false,required: true,url:'../recycle/findAllNameByRecycle.action',valueField:'re_id',textField:'re_name'}},
+											formatter:function(value,row){
+												if(addDetail=='addDetail'){
+														return row.re_id;
+													}else{
+														return row.re_name;
+													}
+											}" align="center"  readonly="readonly">回收站名称</th>
+									<th data-options="field:'mm_id',width:50,editor:{type:'combobox',options:{
+											disabled:false,required: true,url:'../materialsInfo/findAllNameByMaterials.action',valueField:'mm_id',textField:'mm_name'}},
+											formatter:function(value,row){
+												if(addDetail=='addDetail'){
+														return row.mm_id;
+													}else{
+														return row.mm_name;
+													}
+											}" align="center">物资名称</th>
+									<th data-options="field:'rm_total',width:50,editor:{type:'validatebox',options:{
+											disabled:false,required: true}}" align="center">数量</th>
+									<th data-options="field:'rm_loss',width:50,editor:{type:'validatebox',options:{
+											disabled:false,required: true}}" align="center">损耗量</th>
+									<th data-options="field:'rm_createTime',width:50,editor:{type:'datebox',options:{
+											disabled:false}}"  align="center" >创建时间</th>
+									<th data-options="field:'rm_remark',width:50,editor:{type:'validatebox',options:{
+											disabled:false}}"  align="center" >备注</th>
+								</tr>
+					   		</thead>
+					   	</table>
+						<div id="tb2">
+							<div>
+								<a href="javascript:wbDetailManager2()" class="easyui-linkbutton" iconCls="icon-add" plain="true" id="recycleDeatilAdd2">添加</a>
+								<a href="javascript:wbDetailModify2()" class="easyui-linkbutton" iconCls="icon-edit" plain="true" id="recycleDeatilUpdate2">修改</a>
+								<a href="javascript:wbDetailDelete2()" class="easyui-linkbutton" iconCls="icon-remove" plain="true" id="recycleDeatilDel2">删除</a>
+								<a href="javascript:saveWb_detail2()" class="easyui-linkbutton" iconCls="icon-save" plain="true" id="recycleDeatilSav2">保存</a>
+					      	</div>
+						</div>
+					</div>
+					<!-- 回收站物资表 END-->
+					
+				</div>
+			</div>
+		</div>
+		
+		<!-- 导入相关的JS样式 -->
+		<script type="text/javascript" src="../gbmjs/recycleManagementManager.js"></script>
+		
+	</body>
+</html>

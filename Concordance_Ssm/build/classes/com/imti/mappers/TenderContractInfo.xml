@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.TenderContractInfoDao">
+<!-- 投标管理所有信息查询 -->
+<select id="findtenderContractInfo"  parameterType="Map" resultType="TenderContractInfo">
+	select
+			te.td_id,
+			co.co_id,
+			co.co_name,
+			te.td_num,
+			te.td_name,
+			te.td_state,
+			te.td_biddingTime,
+			te.td_winTenderTime,
+			te.td_BiddingUnit,
+			te.td_signingTime,
+			te.td_contractTime,
+			te.td_leader,
+			te.td_createTime,
+			te.td_remark
+	from
+		t_tendercontractinfo te
+	inner join
+		t_community	co
+	on
+		co.co_id=te.co_id
+	where
+		te.td_delflag=0
+	<if test="td_names!=null and td_names!=''">
+		and	td_name like concat('%',#{td_names},'%')
+	</if>
+		order by te.td_createTime desc
+		limit #{pageBean.start},#{pageBean.rows}
+</select>
+<!-- 投标管理信息总条数查询 -->
+<select id="findTenderContractInfoCount" parameterType="Map" resultType="Integer">
+	select
+			count(*)
+	from
+		t_tendercontractinfo 
+	where
+		td_delflag=0
+	<if test="td_names!=null and td_names!=''">
+		and td_name like concat('%',#{td_names},'%')
+	</if>
+</select>
+<!-- 投标管新增数据 -->
+<insert id="newtenderContractInfoInfo" parameterType="TenderContractInfo">
+		insert into
+		t_tendercontractinfo(
+	  		co_id,					
+			td_num,		
+			td_name,		
+			td_state,	
+			td_biddingTime,	
+			td_winTenderTime,
+			td_BiddingUnit,
+			td_signingTime,
+			td_contractTime,	
+			td_leader,
+			td_delflag,		
+			td_states,
+			td_createTime,
+			td_opt_id,
+			td_remark
+			)values(
+	  		#{co_id},					
+			#{td_num},		
+			#{td_name},		
+			#{td_state},	
+			#{td_biddingTime},	
+			#{td_winTenderTime},
+			#{td_BiddingUnit},
+			#{td_signingTime},
+			#{td_contractTime},	
+			#{td_leader},
+			#{td_delflag},		
+			#{td_states},
+			#{td_createTime},
+			#{td_opt_id},
+			#{td_remark}
+			)
+</insert>
+<!-- 投标管理修改数据 -->
+<update id="updateTenderContract" parameterType="TenderContractInfo">
+		update 
+		t_tendercontractinfo
+		set
+	  		co_id=#{co_id},					
+			td_num=#{td_num},		
+			td_name=#{td_name},		
+			td_state=#{td_state},	
+			td_biddingTime=#{td_biddingTime},	
+			td_winTenderTime=#{td_winTenderTime},
+			td_BiddingUnit=#{td_BiddingUnit},
+			td_signingTime=#{td_signingTime},
+			td_contractTime=#{td_contractTime},	
+			td_leader=#{td_leader},
+			td_remark=#{td_remark}
+		where
+			td_delflag=0
+		and
+			td_id=#{td_id}
+</update>
+<!-- 投标管删除数据 -->
+<update id="deleteTenderContract" parameterType="Integer">
+		update 
+		t_tendercontractinfo
+		set
+			td_delflag=1
+		where
+			td_delflag=0
+		and
+			td_id=#{td_id}
+</update>
+</mapper>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.EmployeeInfoDao">
+	<!-- 内部员工登陆的sql语句 -->
+	<select id="login" parameterType="EmployeeInfo" resultType="EmployeeInfo">
+		select
+			em_id ,
+			em_name ,
+			em_age ,
+			em_idCard ,
+			em_native ,
+			em_location ,
+			em_entryTime ,
+			ro_id ,
+			em_account ,
+			em_password ,
+			em_phone ,
+			em_email ,
+			em_state ,
+			em_delflag ,
+			em_createTime ,
+			em_opt_id ,
+			em_remark
+		from
+			t_employeeinfo
+		where
+			em_delflag=0
+		and
+			em_account=#{em_account}
+		and
+			em_password=md5(#{em_password})
+	</select>
+	<!-- 查找所有员工信息的方法 -->
+	<select id="findAllEmployeeInfo" parameterType="Map" resultType="EmployeeInfo">
+		select
+			em.em_id ,
+			em.em_name ,
+			em.em_age ,
+			em.em_idCard ,
+			em.em_native ,
+			em.em_location ,
+			em.em_entryTime ,
+			em.ro_id ,
+			ro.ro_name ,
+			em.em_account ,
+			em.em_password ,
+			em.em_phone ,
+			em.em_email ,
+			em.em_state ,
+			em.em_delflag ,
+			em.em_createTime ,
+			em.em_opt_id ,
+			em.em_remark
+		from
+			t_employeeinfo em
+		inner join
+			t_roleinfo ro
+		on
+			em.ro_id=ro.ro_id
+		where
+			em.em_delflag=0
+	<if test="searchByName!=null and searchByName!=''">
+		and
+			em.em_account like concat('%',#{searchByName},'%')
+	</if>
+		order by em.em_createTime desc
+		limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	<!-- 查找所有员工信息的行数用于分页 -->
+	<select id="findAllEmployeeInfoCount" parameterType="Map" resultType="Integer">
+		select
+			count(*)
+		from
+			t_employeeinfo
+		where
+			em_delflag=0
+	<if test="searchByName!=null and searchByName!=''">
+		and
+			em_account like concat('%',#{searchByName},'%')
+	</if>
+	</select>
+	<!-- 删除员工信息的方法 -->
+	<update id="deleteEmployeeInfoById" parameterType="Integer">
+		update
+			t_employeeinfo
+		set
+			em_delflag=1
+		where
+			em_id=#{em_id}
+	</update>
+	<!-- 验证用户名是否重复 -->
+	<select id="emAccountIsExist" resultType="Integer" parameterType="Map">
+		select
+			count(em_account)
+		from
+			t_employeeinfo
+		where
+			em_delflag=0
+		and
+			em_account = #{em_account}
+	</select>
+	<!-- 新增时所用的保存方法 -->
+	<insert id="saveEmployeeInfo" parameterType="EmployeeInfo">
+		insert into
+			t_employeeinfo(
+				em_name ,
+				em_age ,
+				em_idCard ,
+				em_native ,
+				em_location ,
+				em_entryTime ,
+				ro_id ,
+				em_account ,
+				em_password ,
+				em_phone ,
+				em_email ,
+				em_state ,
+				em_delflag ,
+				em_createTime ,
+				em_opt_id ,
+				em_remark
+			) values(
+				#{em_name} ,
+				#{em_age} ,
+				#{em_idCard} ,
+				#{em_native} ,
+				#{em_location} ,
+				#{em_entryTime} ,
+				#{ro_id} ,
+				#{em_account} ,
+				md5(#{em_password}) ,
+				#{em_phone} ,
+				#{em_email} ,
+				#{em_state} ,
+				#{em_delflag} ,
+				#{em_createTime} ,
+				#{em_opt_id} ,
+				#{em_remark}
+			)
+	</insert>
+	<!-- 修改用户信息 -->
+	<update id="updateEmployeeInfo" parameterType="EmployeeInfo">
+		update
+			t_employeeinfo
+		set
+			em_name = #{em_name},
+			em_age = #{em_age},
+			em_idCard = #{em_idCard},
+			em_native = #{em_native},
+			em_location = #{em_location},
+			em_entryTime = #{em_entryTime},
+			ro_id = #{ro_id},
+			em_account = #{em_account},
+			em_password = #{em_password},
+			em_phone = #{em_phone},
+			em_email = #{em_email},
+			em_state = #{em_state},
+			em_delflag = #{em_delflag},
+			em_createTime = #{em_createTime},
+			em_opt_id = #{em_opt_id},
+			em_remark = #{em_remark}
+		where
+			em_id = #{em_id}
+	</update>
+	<!-- Md5加密后修改用户信息时判断密码是否修改的方法 -->
+	<select id="findPasswordByEmId" parameterType="Integer" resultType="String">
+		select
+			em_password
+		from
+			t_employeeinfo
+		where
+			em_id = #{em_id}
+		and
+			em_delflag=0
+	</select>
+	<!-- 下拉框的信息展示 -->
+	<select id="findAllNameByRemId" resultType="Recycleemployeeinfo">
+		select
+			em_id,
+			em_name
+		from
+			t_employeeinfo
+		where
+			em_delflag = 0
+	</select>
+</mapper> 

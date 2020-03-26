@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<meta charset="UTF-8">
+		<title>车辆统计</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../custom/uimaker/icon.css">
+		<link rel="stylesheet" href="../css/providers1.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+	
+	<div id="dlgCartsInfo" class="containerd" style="width: 100%;height:100%;padding: 10px 20px" closed="true" buttons="#dlg-buttons" closable="false"  modal="true">
+		     <form id="formCartsInfo" method="post">
+		           <table cellspacing="5px" style="margin:0 auto">
+			          <p><input type="hidden" id="carts_id" name="carts_id" /></p>
+			         
+			          <tr height="30px">
+			               <td>司机：</td>
+			                <td>
+				                     <input type="hidden" id="em_id" name="em_id"/>
+				                     <input type="text" id="em_name" name="em_name" class="easyui-linkbutton" required="true" readonly="readonly"/>
+			                </td>
+			                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					                 <td colspan="2"><a href="javascript:openUserChooseDialog()" class="easyui-linkbutton">选择司机</a></td> 
+			         
+			                <td>车牌号：</td>
+			                <td>
+				                     <input type="hidden" id="ve_id" name="ve_id"/>
+				                     <input type="hidden" id="ve_firm" name="ve_firm"/>
+				                     <input type="text" id="ve_license" name="ve_license" class="easyui-linkbutton" required="true" readonly="readonly"/>
+			                </td>
+					                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					                 <td colspan="2"><a href="javascript:openCarChooseDialog()" class="easyui-linkbutton">选择车辆</a></td>
+					                 
+					                 <td>车辆类型：</td>
+			                <td>
+				                     <input type="hidden" id="ve_id" name="ve_id"/>
+				                     <input type="hidden" id="ve_firm" name="ve_firm"/>
+				                     <input type="text" id="ve_type" name="ve_type" class="easyui-linkbutton" required="true" readonly="readonly"/>
+			                </td>
+					                 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					                 <td colspan="2"><a href="javascript:openStateChooseDialog()" class="easyui-linkbutton">选择车辆类型</a></td>
+					             
+					             
+					              <td>
+					                  <a href="javascript:searchCartsInfoByName()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+			           </td>
+			          </tr>
+			          
+			     </table>
+	        </form>
+		  </div>
+	<!-- 车辆列表start -->
+		<div class="container" style="width:100%;">
+	       <table class="easyui-datagrid"  id="dgCartsInfo" style="width:100%;" data-options="
+	                rownumbers:true,
+	                pagination:true,
+	                fitColumns:true,
+	                striped:true,
+	                collapsible:true,
+	                toolbar:'#tb',
+	                pageSize:10,
+	                url:'../carStatistics/findCarStatistics.action'">
+	            <thead>
+	                <tr>
+	                	<th field="ck" checkbox="true" align="center" width="50px"></th>
+	                    <th field="ve_license" align="center" width="50px">车牌号</th>
+	                    <th field="em_name" align="center" width="50px">司机</th>
+	                    <th field="vd_company" align="center" width="50px">所属单位</th>
+	                     <th field="ve_capacity" align="center" width="50px">容量</th>
+	                       <th field="ve_type" align="center" width="50px">类型</th>
+	                       <th field="vd_state" align="center" width="50px">车辆状态</th>
+	                    <th field="vd_borrowTime" align="center" width="50px">借用时间</th>
+	                    <th field="vd_returnTime" align="center" width="50px">归还时间</th>
+	                    <th field="vd_useCompany" align="center" width="50px">使用单位</th>
+	                    <th field="vd_opt_id" align="center" width="50px">操作人</th>
+	                     <th field="vd_createTime" align="center" width="50px">调用时间</th>
+	                    <th field="vd_remark" align="center" width="60px">备注</th>
+	                </tr>
+	            </thead>
+	        </table>
+	        
+	      <!-- datagrid工具栏（增删改查）start -->
+	     <!--   <div id="tb" style="padding:0 30px;width:100%;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newCartsInfo()" class="easyui-linkbutton" data-options="selected:true">车辆调度</a>
+	        	<div class="conditions" style="float:right;margin-right: 20px">
+		          	<span class="con-span">车辆类型: </span>
+		          	<input class="easyui-textbox" type="text" name="searchByName"  id="searchByName" style="width:166px;height:35px;line-height:35px;"></input>
+		          	<input colspan="2"><a href="javascript:openCarChooseDialog()" class="easyui-linkbutton">选择车辆</a></td>
+		          	<span class="con-span">司机: </span>
+		          	<input class="easyui-textbox" type="text" name="searchByName"  id="searchByName" style="width:166px;height:35px;line-height:35px;"></input>
+		          	<span class="con-span">车牌号: </span>
+		          	<input class="easyui-textbox" type="text" name="searchByName"  id="searchByName" style="width:166px;height:35px;line-height:35px;"></input>
+		          	 <a href="javascript:searchCartsInfoByName()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	       		</div>
+	        </div> 
+	      </div>
+	     datagrid工具栏（增删改查）end -->
+    	</div>
+    	<!-- 用户列表end -->
+    	
+    	
+    	
+    	
+    	
+    	<!-- 用户操作form表单—START -->
+	     <div id="dlg-buttons">
+		     
+		 </div> 
+	    
+	   	
+		  
+		  <!--  车辆列表—START -->
+		<div id="dlgCarInfo" class="easyui-dialog" iconCls="icon-search" style="width: 500px;height: 480px;padding: 10px 20px" closed="true" buttons="#dlg2-buttons" title="请选择车辆" modal="true">
+		      <div style="height: 40px" align="center">
+			                      车牌号：<input type="text" id="s_roleNames" name="s_roleNames" onkeydown="if(event.keyCode==13) searchRole()"/>
+			          <a href="javascript:searchCar()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+			  </div>
+		      <div style="height: 350px;">
+			       <table id="dgCarInfo" title="查询结果" class="easyui-datagrid" fitColumns="true" pagination="true" rownumbers="true" fit="true" singleSelect="true" url="../find/plateNumber.action">
+			            <thead>
+						    <tr>
+						          
+						          <th field="ck" checkbox="true" align="center" width="50px"></th>
+						          <th field="ve_id" width="50" align="center">车辆编号</th>
+						          <th field="ve_license" width="50" align="center">车牌号</th>
+						          <th field="ve_remark" width="50" align="center">备注</th>
+						         <th field="ve_firm" width="50" align="center">所属地</th>
+						   </tr>
+			      		</thead>
+			    	</table>
+				</div>
+	  	 	</div>
+	  	 	<div id="dlg2-buttons">
+			      <a href="javascript:chooseCar()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+			      <a href="javascript:closeCarDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+			</div> 
+	  	 	<div id="dlgstateInfo" class="easyui-dialog" iconCls="icon-search" style="width: 500px;height: 480px;padding: 10px 20px" closed="true" buttons="#dlg2-buttons" title="请选择类型" modal="true">
+		      <div style="height: 40px" align="center">
+			                      类型：<input type="text" id="s_roleNames" name="s_roleNames" onkeydown="if(event.keyCode==13) searchRole()"/>
+			          <a href="javascript:searchCar()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+			  </div>
+		      <div style="height: 350px;">
+			       <table id="dgstateInfo" title="查询结果" class="easyui-datagrid" fitColumns="true" pagination="true" rownumbers="true" fit="true" singleSelect="true" url="../find/State.action">
+			            <thead>
+						    <tr>
+						          
+						          <th field="ck"  checkbox="true"    align="center" width="50px"></th>
+						          <th field="ve_id" width="50" align="center">车辆编号</th>
+						          <th field="ve_type" width="50" align="center">车辆类型</th>
+						          <th field="ve_remark" width="50" align="center">备注</th>
+						         <th field="ve_firm" width="50" align="center">所属地</th>
+						   </tr>
+			      		</thead>
+			    	</table>
+				</div>
+	  	 	</div>
+		   <div id="dlg2-buttons">
+			      <a href="javascript:chooseState()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+			      <a href="javascript:closeStateDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+			</div> 
+	 		<!--  车辆列表—END --> 
+	 		
+	 		 <!--  司机列表—START -->
+		<div id="dlgUserInfo" class="easyui-dialog" iconCls="icon-search" style="width: 500px;height: 480px;padding: 10px 20px" closed="true" buttons="#dlg2-buttons" title="请选择司机" modal="true">
+		      <div style="height: 40px" align="center">
+			                      司机：<input type="text" id="s_roleName" name="s_roleName"/>
+			          <a href="javascript:searchUser()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+			          
+			  </div>
+		      <div style="height: 350px;">
+			       <table id="dgUserInfo" title="查询结果" class="easyui-datagrid" fitColumns="true" pagination="true" rownumbers="true" fit="true" singleSelect="true" url="../find/driver.action">
+			            <thead>
+						    <tr>
+						            <th field="ck" checkbox="true" align="center" width="50px"></th>
+						          <th field="em_id" width="50" align="center">司机编号</th>
+						          <th field="em_name" width="100" align="center">司机名称</th>
+						          <th field="em_remark" width="50" align="center">备注</th>
+						   </tr>
+			      		</thead>
+			    	</table>
+				</div>
+	  	 	</div>
+		   <div id="dlg2-buttons">
+			      <a href="javascript:chooseUser()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+			      <a href="javascript:closeUserDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+			</div> 
+	 		<!--  司机列表—END -->
+		  <!-- 用户操作form表单—END -->  
+			<script type="text/javascript" src="../gbmjs/carStatistics.js"></script>
+	</body>
+</html>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.WorkBookInfoDao">
+	<!-- 创建一个返回值类型的map -->
+	<resultMap type="WorkBookInfo" id="resultWorkBookInfo">
+		<id column="wb_id" property="wb_id"/>
+		<result column="wb_name" property="wb_name"/>
+		<result column="wb_delflag" property="wb_delflag"/>
+		<result column="wb_createTime" property="wb_createTime"/>
+		<result column="wb_remark" property="wb_remark"/>
+		<result column="wb_optId" property="wb_optId"/>
+		<collection property="wbdList" column="wb_id" ofType="WorkBookDetailInfo" select="com.imti.dao.WorkBookDetailInfoDao.findWorkBookDetailInfoByWbId"></collection>
+	</resultMap>
+	<!-- 查询所有数据字典主表信息 -->
+	<select id="findAllworkBook" parameterType="Map" resultMap="resultWorkBookInfo">
+		select
+			wb_id,
+			wb_name,
+			wb_delflag,
+			wb_state,
+			wb_createTime,
+			wb_optId,
+			wb_remark
+		from
+			t_workbookinfo
+		where
+			wb_delflag = 0
+		<if test="searchValue != null and searchValue != ''">
+		and
+			wb_name
+		like concat('%',#{searchValue},'%')
+		</if>
+		order by wb_createTime desc
+		limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	<!-- 查询所有数据字典主表的信息条数，用于分页 -->
+	<select id="findAllworkBookCount" parameterType="Map" resultType="Integer">
+		select
+			count(wb_delflag)
+		from
+			t_workbookinfo
+		where
+			wb_delflag = 0
+		<if test="searchValue != null and searchValue != ''">
+		and
+			wb_name
+		like concat('%',#{searchValue},'%')
+		</if>
+	</select>
+	<!-- 新建主表信息 -->
+	<insert id="addWorkBookInfo" parameterType="WorkBookInfo">
+		insert into
+			t_workbookinfo(
+				wb_name,
+				wb_delflag,
+				wb_state,
+				wb_createTime,
+				wb_optId,
+				wb_remark
+			) values(
+				#{wb_name},
+				#{wb_delflag},
+				#{wb_state},
+				#{wb_createTime},
+				#{wb_optId},
+				#{wb_remark}
+			)
+	</insert>
+	<!-- 获取最大数据字典的主表id -->
+	<select id="getWorkBookInfoMaxId" resultType="Integer">
+		select
+			max(wb_id)
+		from
+			t_workbookinfo
+		where
+			wb_delflag = 0
+	</select>
+	<!-- 删除数据字典主表信息 -->
+	<update id="deleteWorkBookInfo" parameterType="Integer">
+		update
+			t_workbookinfo
+		set
+			wb_delflag = 1
+		where
+			wb_id = #{wb_id}
+	</update>
+	<!-- 修改数据字典主表信息 -->
+	<update id="updateWorkBookInfo" parameterType="WorkBookInfo">
+		update
+			t_workbookinfo
+		set
+			wb_name = #{wb_name},
+			wb_remark = #{wb_remark}
+		where
+			wb_id = #{wb_id}
+	</update>
+	
+</mapper>

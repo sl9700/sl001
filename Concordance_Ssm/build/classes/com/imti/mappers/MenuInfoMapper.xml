@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.MenuInfoDao">
+	<!-- 查询菜单的sql语句 -->
+	<!-- 不同的用户拥有不同的角色，不同的角色看到不同的菜单 -->
+	<select id="findMenuInfoByRole" parameterType="Map" resultType="MenuInfo">
+		select
+			mn_id,
+			mn_menuName,
+			mn_iconCls,
+			mn_parent,
+			mn_path,
+			mn_son,
+			mn_state,
+			mn_delflag,
+			mn_createTime,
+			mn_opt_id,
+			mn_remark
+		from
+			t_menu
+		where
+			mn_delflag = 0
+		and
+			mn_parent = #{prentId}
+		and
+			mn_id in			<!-- collection中是map集合的键值 -->
+			<foreach collection="menuIds" item="menuId" separator="," open="(" close=")">
+				#{menuId}
+			</foreach>
+	</select>
+	<!-- 查找并展示所有菜单信息 -->
+	<select id="findAllMenuInfo" resultType="MenuInfo" parameterType="Integer">
+		select
+			mn_id,
+			mn_menuName,
+			mn_iconCls,
+			mn_parent,
+			mn_path,
+			mn_son,
+			mn_state,
+			mn_delflag,
+			mn_createTime,
+			mn_opt_id,
+			mn_remark
+		from
+			t_menu
+		where
+			mn_delflag = 0
+		and
+			mn_parent = #{mn_parent}
+	</select>
+	<!-- 给没有子节点的菜单信息添加子节点时所用的方法 -->
+	<update id="updateParentMenuInfo" parameterType="Integer">
+		update
+			t_menu
+		set
+			mn_son = 'close',
+			mn_path = ''
+		where
+			mn_id = #{mn_id}
+	</update>
+	<!-- 添加新的菜单信息 -->
+	<insert id="addMenuInfo" parameterType="MenuInfo">
+		insert
+			t_menu(
+				mn_menuName,
+				mn_iconCls,
+				mn_parent,
+				mn_path,
+				mn_son,
+				mn_state,
+				mn_delflag,
+				mn_createTime,
+				mn_opt_id,
+				mn_remark
+			) values(
+				#{mn_menuName},
+				#{mn_iconCls},
+				#{mn_parent},
+				#{mn_path},
+				#{mn_son},
+				#{mn_state},
+				#{mn_delflag},
+				#{mn_createTime},
+				#{mn_opt_id},
+				#{mn_remark}
+			)
+	</insert>
+	<!-- 查询当前节点是否有子节点 -->
+	<select id="hasChildren" parameterType="Map" resultType="Integer">
+		select
+			count(mn_parent)
+		from
+			t_menu
+		where
+			mn_delflag = 0
+		and
+			mn_parent = #{mn_parent}
+		and
+			mn_id
+		in
+		<foreach collection="menuIds" item="menuId" separator="," open="(" close=")">
+			#{menuId}
+		</foreach>
+	</select>
+	<!-- 删除菜单信息 -->
+	<update id="deleteMenuInfo" parameterType="Integer">
+		update
+			t_menu
+		set
+			mn_delflag = 1
+		where
+			mn_id = #{mn_id}
+	</update>
+	<!-- 修改菜单信息 -->
+	<update id="updateMenuInfo" parameterType="MenuInfo">
+		update
+			t_menu
+		set
+			mn_menuName = #{mn_menuName},
+			mn_iconCls = #{mn_iconCls},
+			mn_path = #{mn_path},
+			mn_state = #{mn_state},
+			mn_delflag = #{mn_delflag},
+			mn_createTime = #{mn_createTime},
+			mn_remark = #{mn_remark}
+		where
+			mn_delflag = 0
+		and
+			mn_id = #{mn_id}
+	</update>
+
+</mapper> 

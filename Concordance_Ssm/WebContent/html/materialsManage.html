@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>投标管理</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+		<table class="easyui-datagrid" id="materialsManageInfoDataGrid" style="width:100%" data-options="
+																fitColumns:true,
+																pagination:true,
+																rownumbers:true,
+																toolbar:'#tb',
+																fit:true,
+																url:'../MaterialsManageInfo/findMaterialsManageInfo.action'">
+			
+			<!-- 投标管理信息datagrid START -->
+			<thead>
+					     		<tr>
+									<th data-options="field:'cb',checkbox:true,width:50" align="center"></th>
+									<th data-options="field:'mt_name',width:50 " align="center" id="mt_name">物资类型</th>
+									<th data-options="field:'em_name',width:50 " align="center" id="em_name">采购人</th>
+									<th data-options="field:'mm_name',width:50 " align="center" id="mm_name">物资名称</th>
+									<th data-options="field:'mm_brand',width:50  " align="center" id="mm_brand">品牌</th>
+									<th data-options="field:'mm_standard',width:50  " align="center" id="mm_standard">规格</th>
+									<th data-options="field:'mm_unit',width:50 " align="center" id="mm_unit">单位</th>
+					     			<th data-options="field:'mm_quantity',width:50  " align="center" id="mm_quantity">数量</th>
+									<th data-options="field:'mm_purchaseUnitPrice',width:50 " align="center" id="mm_purchaseUnitPrice">采购单价</th>
+					     			<th data-options="field:'mm_purchaseTime',width:50 " align="center" id="mm_purchaseTime">采购时间</th>
+									<th data-options="field:'mm_inventory',width:50 " align="center" id="mm_inventory">库存</th>
+									<th data-options="field:'mm_dateOfManufacture',width:50 " align="center" id="mm_dateOfManufacture">生产日期</th>
+					     			<th data-options="field:'mm_expirationDate',width:50 " align="center" id="mm_expirationDate">保质期</th>
+									<th data-options="field:'mm_remark',width:50 " align="center" id="mm_remark">备注</th>
+					     		</tr>
+					   		</thead>
+		</table>
+		<!-- 投标管理信息datagrid END -->
+		<!-- 投标管理信息按钮datagrid START -->
+		<div id="tb" style="padding:30px;width:100%; height:20px;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newtenderContract()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+	            <a href="javascript:updatetenderContractInfo()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:deletetenderContractInfo()" class="easyui-linkbutton">删除</a>
+	        	<div class="conditions" style="float:right;margin-right: 20px">
+		          	<span class="con-span">物资名: </span>
+		          	<input class="easyui-textbox" type="text" name="mm_name"  id="mm_name" style="width:166px;height:35px;line-height:35px;"></input>
+		          	 <a href="javascript:searchtenderMaterialsByName" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	       		</div>
+	        </div>
+        </div>
+        <!-- 投标管理信息按钮datagrid END -->
+        
+         <!-- 投标管理信息form表单 START-->
+        <div id="dlgmaterialsManageInfo" class="easyui-dialog"style="width: 570px;height: 460px;padding: 10px 20px" data-options="closed:true,modal:true,buttons:'#dlg-buttons'" >
+   			<form id="fmmaterialsManageInfo" method="post">
+		         <table cellspacing="5px">
+					<p><input type="hidden" id="mm_id" name="mm_id" /></p>
+					<tr>
+						 <td>物资名称：</td>
+					    <td><input type="text" id="mm_name" name="mm_name" class="easyui-validatebox" data-options="required:true"/></td>
+						 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td height="35px">品牌：</td>
+					    <td><input type="text" id="mm_brand" name="mm_brand" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>物资规格：</td>
+					    <td><input type="text" id="mm_standard" name="mm_standard" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>单位：</td>
+					    <td><input type="text" id="mm_unit" name="mm_unit" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>数量：</td>
+					    <td><input type="text" id="mm_quantity" name="mm_quantity" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>采购单价：</td>
+					    <td><input type="text" id="mm_purchaseUnitPrice" name="mm_purchaseUnitPrice" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					<tr height="35px">
+						<td>采购时间：</td>
+					    <td><input type="text" id="mm_purchaseTime" name="mm_purchaseTime" class="easyui-datebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>库存：</td>
+					    <td><input type="text" id="mm_inventory" name="mm_inventory" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 
+					 <tr height="35px">
+						 <td>生产日期：</td>
+					    <td><input type="text" id="mm_dateOfManufacture" name="mm_dateOfManufacture" class="easyui-datebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>保质期：</td>
+					    <td>
+							 <input type="text" id="mm_expirationDate" name="mm_expirationDate" class="easyui-validatebox" data-options="required:true" />
+						</td>
+					 </tr>
+					 <tr>						
+						<td>采购人：</td>
+						<td>
+						 <input type="hidden" id="em_ids" name="em_id"/>
+						 <input type="text" id="em_names" name="em_name" class="easyui-validatebox" data-options="required:true" readonly="readonly"/>
+						 </td>
+						 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						 <td>物资类型：</td>
+						 <td>
+						 <input type="hidden" id="mt_ids" name="mt_id"/>
+						 <input type="text" id="mt_names" name="mt_name" class="easyui-validatebox" data-options="required:true" readonly="readonly"/>
+						 </td>
+					 </tr>
+					 <tr>
+					 	
+						 <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+ 						<td colspan="2">
+							<a href="javascript:openCommunityDialog()" class="easyui-linkbutton">选择采购人</a>
+						</td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td colspan="2">
+							<a href="javascript:openmaterialsManageDialog()" class="easyui-linkbutton">选择物资类型</a>
+						</td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						
+					</tr>
+					<tr height="35px">
+						<td>备注：</td>
+						<td colspan="5">
+					    	<textarea rows="7" cols="50" name="mm_remark" id="mm_remark"></textarea>
+					    </td>
+					</tr>
+					</table>
+			</form>
+		  		 <!-- 投标管理信息form表单 END-->
+		  		 <!-- 投标管理信息form表单按钮 END-->
+				<div id="dlg-buttons">
+				      <a href="javascript:saveEmployeeInfo()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+				      <a href="javascript:closeEmployeeInfoDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+				</div> 
+		</div>
+	 <!-- 投标管理信息form表单按钮 END-->
+	 <!-- 物资类型Dialog START -->
+	<div id="dlgmaterialTypeInfo" class="easyui-dialog" data-options="iconCls:'icon-search',closed:true,buttons:'#dlg2-buttons',modal:true"  style="width: 500px;height: 480px;padding: 10px 20px">
+	       <div style="height: 40px" align="center">
+				物资类型：<input type="text" id="searchByName" name="searchByName" onkeydown="if(event.keyCode==13) searchRole()"/>
+		  		<a href="javascript:searchRole()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+		   </div>
+			<div style="height: 350px;">
+				<table id="dgmaterInfo" title="查询结果" class="easyui-datagrid" data-options="fitColumns:true,pagination:true,rownumbers:true,fit:true,singleSelect:true,url:'../materialType/findAllmaterialType.action'">
+				    <thead>
+					<tr>
+						  <th data-options="field:'ck',checkbox:true,width:50," align="center"></th>
+						  <th data-options="field:'mt_id',width:'50'," align="center">编号</th>
+					      <th data-options="field:'mt_name',width:'50'," align="center">物资类型</th>
+					      <th data-options="field:'mt_remark',width:'50'," align="center">备注</th>
+					 </tr>
+				     </thead>
+				 </table>
+			</div>
+	</div>
+	<!--选择采购人-->
+	<div id="dlgemployeeInfo" class="easyui-dialog" data-options="iconCls:'icon-search',closed:true,buttons:'#dlg3-buttons',modal:true"  style="width: 500px;height: 480px;padding: 10px 20px">
+	       <div style="height: 40px" align="center">
+				采购人：<input type="text" id="searchByName" name="searchByName" onkeydown="if(event.keyCode==13) searchRole()"/>
+		  		<a href="javascript:searchEmployeeInfoByName" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+		   </div>
+			<div style="height: 350px;">
+				<table id="dgemployeeInfo" title="查询结果" class="easyui-datagrid" data-options="fitColumns:true,pagination:true,rownumbers:true,fit:true,singleSelect:true,url:'../employeeInfo/findAllEmployeeInfo.action'">
+				    <thead>
+					<tr>
+						  <th data-options="field:'ck',checkbox:true,width:50," align="center"></th>
+						  <th data-options="field:'em_id',width:'50'," align="center">编号</th>
+					      <th data-options="field:'em_name',width:'50'," align="center">角色名称</th>
+					      <th data-options="field:'em_remark',width:'50'," align="center">备注</th>
+					 </tr>
+				     </thead>
+				 </table>
+			</div>
+	</div>
+	<!-- 小区信息Dialog END -->
+		<!-- 物资类型Dialog按钮 START -->
+	<div id="dlg2-buttons">
+	      <a href="javascript:choosematerialType()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+	      <a href="javascript:closeCommunityDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div>
+	<!-- 选择采购人Dialog按钮 START -->
+	<div id="dlg3-buttons">
+	      <a href="javascript:chooseemployee()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+	      <a href="javascript:closeemployeeDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div>
+	<!-- 角色信息Dialog按钮 END -->
+	
+        <script type="text/javascript" src="../gbmjs/materialsManage.js"></script>
+	</body>
+</html>

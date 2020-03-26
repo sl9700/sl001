@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.CommunityDao">
+	<!-- 试点小区信息查询 -->
+	<select id="findAllCommunity" parameterType="Map" resultType="Community">
+		select
+			co.co_id,
+			em.em_name,
+			co.co_name,
+			co.co_address,
+			co.co_coordinate,
+			co.co_residential,
+			co.co_beginTime,
+			co.co_principal,
+			co.co_tel,
+			co.co_population,
+			co.co_type,
+			co.co_projectLeader,
+			co.co_delflag,
+			co.co_state,
+			co.co_createTime,
+			co.co_opt_id,
+			co.co_remark
+		from
+			t_community co
+		INNER JOIN
+			t_employeeinfo em
+		on em.em_id=co.co_projectLeader
+		where
+			co_delflag=0
+			order by co_createTime desc
+			limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	<!-- 试点小区信息总条数查询 -->
+	<select id="findAllCommunityCount" parameterType="Map" resultType="Integer">
+		select count(co_delflag) from t_community where co_delflag=0
+		<if test="s_communityname!=null and s_communityname!=''">
+				and	co_name like concat('%',#{s_communityname},'%')
+		</if>
+	</select>
+	<select id="findAllCommunityCountMAXid" resultType="Integer">
+			SELECT MAX(co_id) FROM t_community
+	</select>
+	<insert id="newCommunityInfo" parameterType="Community">
+			insert into
+			t_community(
+			co_name,
+			co_address,
+			co_coordinate,
+			co_residential,
+			co_beginTime,
+			co_principal,
+			co_tel,
+			co_population,
+			co_type,
+			co_projectLeader,
+			co_delflag,
+			co_state,
+			co_createTime,
+			co_opt_id,
+			co_remark)
+		values(
+			#{co_name},
+			#{co_address},
+			#{co_coordinate},
+			#{co_residential},
+			#{co_beginTime},
+			#{co_principal},
+			#{co_tel},
+			#{co_population},
+			#{co_type},
+			#{co_projectLeader},
+			#{co_delflag},
+			#{co_state},
+			#{co_createTime},
+			#{co_opt_id},
+			#{co_remark}
+		)						
+	</insert>
+	<update id="updateCommunityInfo" parameterType="Community">
+			update
+				t_community
+			set
+				co_name=#{co_name},
+				co_address=#{co_address},
+				co_coordinate=#{co_coordinate},
+				co_residential=#{co_residential},
+				co_beginTime=#{co_beginTime},
+				co_principal=#{co_principal},
+				co_tel=#{co_tel},
+				co_population=#{co_population},
+				co_type=#{co_type},
+				co_projectLeader=#{co_projectLeader}
+			where
+				co_delflag=0
+			and
+				co_id=#{co_id}
+	</update>
+	<update id="deleteCommunityInfo" parameterType="Integer">
+			update
+				t_community
+			set
+			co_delflag=1
+			where
+			co_delflag=0
+			and
+			co_id=#{co_id}
+	</update>
+</mapper>

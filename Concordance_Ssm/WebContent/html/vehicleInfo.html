@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>车辆信息</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+		<table class="easyui-datagrid" id="vehicleDataGrid" style="width:100%" data-options="
+																fitColumns:true,
+																pagination:true,
+																rownumbers:true,
+																toolbar:'#tb',
+																fit:true,
+																url:'../vehicleInfo/findAllvehicleInfo.action'">
+			
+			<!-- 车辆信息datagrid按钮 START -->
+			<thead>
+				<tr>
+					<th data-options="field:'ck',checkbox:true" align="center"></th>
+					<th data-options="field:'ve_license',width:100" align="center">车牌号</th>
+					<th data-options="field:'ve_type',width:100" align="center">类型</th>
+					<th data-options="field:'ve_capacity',width:100" align="center">容量</th>
+					<th data-options="field:'ve_firm',width:100" align="center">所属单位</th>
+					<th data-options="field:'ve_upkeepTime',width:100" align="center">上次保养时间</th>
+					<th data-options="field:'ve_examineTime',width:100" align="center">审车时间</th>
+					<th data-options="field:'ve_insuranceCompany',width:100" align="center">保险公司</th>
+					<th data-options="field:'ve_insuranceTime',width:100" align="center">保险截止日期</th>
+				</tr>
+			</thead>														
+		</table>
+		
+		<div id="tb" style="padding:30px;width:100%;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newVehicleInfo()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+	            <a href="javascript:updateVehicleInfo()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:deleteVehicleInfo()" class="easyui-linkbutton">删除</a>
+	        	<div class="conditions" style="float:right;margin-right: 20px">
+		          	<span class="con-span">车牌号: </span>
+		          	<input class="easyui-textbox" type="text" name="searchByName"  id="searchByName" style="width:166px;height:35px;line-height:35px;"></input>
+		          	 <a href="javascript:searchVehicleInfo()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	       		</div>
+	        </div>
+        </div>
+        <!-- 车辆信息datagrid按钮 END -->
+        
+        <!-- 新增/修改车辆信息表单Dialog START -->
+        <div id="dlgVehicleInfo" class="easyui-dialog"style="width: 570px;height: 460px;padding: 10px 20px" data-options="closed:true,modal:true,buttons:'#dlg-buttons'" >
+   			<form id="fmVehicleInfo" method="post">
+		         <table cellspacing="5px">
+					<p><input type="hidden" id="ve_id" name="ve_id" /></p>
+					<tr>
+						<td height="35px">车牌号：</td>
+					    <td><input type="text" id="ve_license" name="ve_license" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>类型：</td>
+					    <td><input type="text" id="ve_type" name="ve_type" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>容量：</td>
+					    <td><input type="text" id="ve_capacity" name="ve_capacity" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>所属单位：</td>
+					    <td><input type="text" id="ve_firm" name="ve_firm" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>上次保养时间：</td>
+					    <td><input type="text" id="ve_upkeepTime" name="ve_upkeepTime" class="easyui-datebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>审车时间：</td>
+					    <td><input type="text" id="ve_examineTime" name="ve_examineTime" class="easyui-datebox" data-options="required:true"/></td>
+					 </tr>
+					<tr height="35px">
+						<td>保险公司：</td>
+					    <td><input type="text" id="ve_insuranceCompany" name="ve_insuranceCompany" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>保险截止日期：</td>
+					    <td><input type="text" id="ve_insuranceTime" name="ve_insuranceTime" class="easyui-datebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>备注：</td>
+						<td colspan="4">
+					    	<textarea rows="7" cols="50" name="ve_remark" id="ve_remark"></textarea>
+					    </td>
+					</tr>
+					</table>
+			</form>
+	</div>
+	<!-- 车辆信息表单Dialog END -->
+	<!-- 车辆信息表单按钮Dialog START -->
+	<div id="dlg-buttons">
+	      <a href="javascript:saveVehicleInfo()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+	      <a href="javascript:closeVehicleInfoDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div> 
+
+	<!-- 车辆信息表单按钮Dialog END -->
+		        <script type="text/javascript" src="../js/carInfoManager.js"></script>
+               	<script type="text/javascript" src="../gbmjs/vehicleInfo.js"></script>
+	</body>
+</html>

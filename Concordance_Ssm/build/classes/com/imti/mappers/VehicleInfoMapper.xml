@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.VehicleInfoDao">
+	<select id="findAllvehicleInfo" resultType="VehicleInfo" parameterType="Map">
+		select
+			ve_id,
+			ve_license,
+			ve_type,
+			ve_capacity,
+			ve_firm,
+			ve_upkeepTime,
+			ve_examineTime,
+			ve_insuranceCompany,
+			ve_insuranceTime,
+			ve_delflag,
+			ve_state,
+			ve_createTime,
+			ve_opt_id,
+			ve_remark
+		from
+			t_vehicleinfo  ve
+		where
+			ve_delflag=0
+		<if test="searchByName!=null and searchByName!=''">
+			and ve_license like concat('%',#{searchByName},'%')
+		</if>
+			limit #{pageBean.start},#{pageBean.rows}
+	</select>
+
+	<select id="findAllvehicleInfoCount" resultType="int">
+		select count(*) from t_vehicleinfo where ve_delflag=0
+	</select>
+	
+	<update id="deleteVehicleInfo" parameterType="Integer">
+		update
+			t_vehicleinfo
+		set
+			ve_delflag=1
+		where
+			ve_id=#{ve_id}
+	</update>
+	
+	<select id="veAccountIsExist" resultType="Integer" parameterType="Map">
+		select
+			count(ve_license)
+		from
+			t_vehicleinfo
+		where
+			ve_delflag=0
+		and
+			ve_license=#{ve_license}
+	</select>
+	
+	<insert id="saveVehicleInfo"  parameterType="VehicleInfo">
+		insert into
+			t_vehicleinfo(
+				ve_license,
+				ve_type,
+				ve_capacity,
+				ve_firm,
+				ve_upkeepTime,
+				ve_examineTime,
+				ve_insuranceCompany,
+				ve_insuranceTime,
+				ve_delflag,
+				ve_state,
+				ve_createTime,
+				ve_opt_id,
+				ve_remark
+			)values(
+				#{ve_license},
+				#{ve_type},
+				#{ve_capacity},
+				#{ve_firm},
+				#{ve_upkeepTime},
+				#{ve_examineTime},
+				#{ve_insuranceCompany},
+				#{ve_insuranceTime},
+				#{ve_delflag},
+				#{ve_state},
+				#{ve_createTime},
+				#{ve_opt_id},
+				#{ve_remark})
+	</insert>
+	
+	<update id="updateVehicleInfo" parameterType="VehicleInfo">
+		update
+			t_vehicleinfo
+		set
+			ve_id=#{ve_id},
+			ve_license=#{ve_license},
+			ve_type=#{ve_type},
+			ve_capacity=#{ve_capacity},
+			ve_firm=#{ve_firm},
+			ve_upkeepTime=#{ve_upkeepTime},
+			ve_examineTime=#{ve_examineTime},
+			ve_insuranceCompany=#{ve_insuranceCompany},
+			ve_insuranceTime=#{ve_insuranceTime},
+			ve_opt_id=#{ve_opt_id},
+			ve_remark=#{ve_remark}
+		where
+			ve_id=#{ve_id}
+		and
+			ve_delflag=0
+	</update>
+</mapper>

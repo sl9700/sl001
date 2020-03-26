@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.MaterialsManageDao">
+	<select id="findMaterialsManageInfo" parameterType="Map" resultType="MaterialsManage">
+						SELECT 
+							  mm.mm_id,
+							  mt.mt_id,
+							  mt.mt_name,
+							  em.em_id,
+							  em.em_name,
+							  mm.mm_name,
+							  mm.mm_brand,
+							  mm.mm_standard,
+							  mm.mm_unit,
+							  mm.mm_quantity,
+							  mm.mm_purchaseUnitPrice,
+							  mm.mm_purchaseTime,
+							  mm.mm_inventory,
+							  mm.mm_dateOfManufacture,
+							  mm.mm_expirationDate,
+							  mm.mm_delflag,
+							  mm.mm_state,
+							  mm.mm_createTime,
+							  mm.mm_opt_id,
+							  mm.mm_remark 
+						FROM
+							  t_materialsManage mm 
+						INNER JOIN t_employeeInfo em 
+						ON 
+							em.em_id = mm.em_id 
+						INNER JOIN 
+							t_materialType mt 
+						    ON mt.mt_id = mm.mt_id 
+						WHERE mm_delflag = 0 
+							<if test="mm_name!=null and mm_name!=''">
+						AND	
+							mm_name 
+						LIKE
+							concat('%',#{mm_name},'%')
+						</if>
+						ORDER BY mm_createTime DESC 
+	</select>
+	<select id="findMaterialsManageInfoCount" parameterType="Map" resultType="Integer">
+	SELECT 
+		count(mm_delflag)
+	FROM
+	  t_materialsManage
+	where 
+	 	mm_delflag = 0
+	  <if test="mm_name!=null and mm_name!=''">
+				and	mm_name like concat('%',#{mm_name},'%')
+	</if>
+	</select>
+	<!-- 物资详情新增 -->
+	<insert id="newMaterialsManageInfo" parameterType="MaterialsManage">
+		insert into
+			t_materialsManage(
+				 mt_id,
+				 em_id,
+				 mm_name,
+				 mm_brand,
+				 mm_standard,
+				 mm_unit,
+				 mm_quantity,
+				 mm_purchaseUnitPrice,
+				 mm_purchaseTime,
+				 mm_inventory,
+				 mm_dateOfManufacture,
+				 mm_expirationDate,
+				 mm_delflag,
+				 mm_state,
+				 mm_createTime,
+				 mm_opt_id,
+				 mm_remark)
+				 values(
+				 #{mt_id},
+				 #{em_id},
+				 #{mm_name},
+				 #{mm_brand},
+				 #{mm_standard},
+				 #{mm_unit},
+				 #{mm_quantity},
+				 #{mm_purchaseUnitPrice},
+				 #{mm_purchaseTime},
+				 #{mm_inventory},
+				 #{mm_dateOfManufacture},
+				 #{mm_expirationDate},
+				 #{mm_delflag},
+				 #{mm_state},
+				 #{mm_createTime},
+				 #{mm_opt_id},
+				 #{mm_remark}
+				 )
+	</insert>
+	<update id="updateMaterialsManageInfo" parameterType="MaterialsManage">
+			update	
+				t_materialsManage
+			set
+				mt_id= #{mt_id},
+				em_id= #{em_id},
+				mm_name= #{mm_name},
+				mm_brand= #{mm_brand},
+				mm_standard= #{mm_standard},
+				mm_unit= #{mm_unit},
+				mm_quantity= #{mm_quantity},
+				mm_purchaseUnitPrice= #{mm_purchaseUnitPrice},
+				mm_purchaseTime= #{mm_purchaseTime},
+				mm_inventory= #{mm_inventory},
+				mm_dateOfManufacture= #{mm_dateOfManufacture},
+				mm_expirationDate= #{mm_expirationDate},
+				mm_remark= #{mm_remark}
+			where
+				mm_id=#{mm_id}
+			and
+			mm_delflag=0
+	</update>
+		<update id="deleteMaterialsManageInfo" parameterType="Integer">
+			update	
+				t_materialsManage
+			set
+				mm_delflag=1
+			where
+				mm_id=#{mm_id}
+			and
+			mm_delflag=0
+	</update>
+</mapper>

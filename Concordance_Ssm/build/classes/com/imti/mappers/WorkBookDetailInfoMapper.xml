@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.WorkBookDetailInfoDao">
+	<!-- 查询子表的所有信息 -->
+	<select id="findWorkBookDetailInfoByWbId" parameterType="Integer" resultType="WorkBookDetailInfo">
+		select
+			wbd_id,
+			wb_id,
+			wbd_name,
+			wbd_delflag,
+			wbd_state,
+			wbd_optId,
+			wbd_createTime,
+			wbd_remark
+		from
+			t_workbookdetailinfo
+		where
+			wbd_delflag = 0
+		and
+			wb_id = #{wb_id}
+	</select>
+	<!-- 添加子表信息 -->
+	<insert id="addWorkBookDetailInfo" parameterType="WorkBookDetailInfo">
+		insert into
+			t_workbookdetailinfo(
+				wb_id,
+				wbd_name,
+				wbd_delflag,
+				wbd_state,
+				wbd_optId,
+				wbd_createTime,
+				wbd_remark
+			) values(
+				#{wb_id},
+				#{wbd_name},
+				#{wbd_delflag},
+				#{wbd_state},
+				#{wbd_optId},
+				#{wbd_createTime},
+				#{wbd_remark}
+			)
+	</insert>
+	<!-- 点击（主删除）删除数据字典主表信息 -->
+	<update id="deleteWorkBookDetailInfo" parameterType="Integer">
+		update
+			t_workbookdetailinfo
+		set
+			wbd_delflag = 1
+		where
+			wb_id = #{wb_id}
+	</update>
+	<!-- 点击修改时，删除子表信息的sql语句 -->
+	<update id="delWorkBookDetailInfo" parameterType="Integer">
+		update
+			t_workbookdetailinfo
+		set
+			wbd_delflag = 1
+		where
+			wbd_id = #{wbd_id}
+	</update>
+	<!-- 点击修改按钮时的sql语句 -->
+	<update id="updateWorkBookDetailInfo" parameterType="WorkBookDetailInfo">
+		update
+			t_workbookdetailinfo
+		set
+			wbd_name = #{wbd_name},
+			wbd_remark = #{wbd_remark}
+		where
+			wbd_id = #{wbd_id}
+	</update>
+	
+</mapper>

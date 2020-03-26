@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>菜单信息</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+		<!-- 菜单信息treegrid START -->
+		<table class="easyui-treegrid" id="menuTreeGrid" style="width: 100%;height: 100%" data-options="fitColumns:true,
+																		 rownumbers:true,
+																		 toolbar:'#tbMenuInfo',
+																		 fit:true,
+																		 fitColumns:true,
+																		 idField:'mn_id',
+																		 treeField:'mn_menuName',
+																		 url:'../menuInfo/findAllMenuInfoForEdit.action'">
+			<thead>
+				<tr>
+					<th data-options="field:'checkbox'" align="center"></th>
+					<th data-options="field:'mn_menuName',width:100" align="center">菜单名称</th>
+					<th data-options="field:'mn_iconCls',width:100" align="center" formatter="formatterIcon">菜单图标</th>
+					<th data-options="field:'mn_path',width:100" align="center">菜单路径</th>
+					<th data-options="field:'mn_createTime',width:100" align="center">创建时间</th>
+					<th data-options="field:'mn_remark',width:100" align="center">备注</th>
+				</tr>
+			</thead>															 
+		</table>
+		<!-- 菜单信息treegrid END -->
+		<!-- 菜单中增删改查的按钮tb START -->
+		<div id="tbMenuInfo" style="padding:0 30px;width:100%;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newMenuInfo()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+	            <a href="javascript:updateMenuInfo()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:deleteMenuInfo()" class="easyui-linkbutton">删除</a>
+	        </div>
+        </div>
+        <!-- 菜单中增删改查的按钮tb END -->
+        
+        <!-- 新增菜单弹框 START -->
+        <div id="dlgMenuInfo" class="easyui-dialog"style="width: 500px;height: 360px;padding: 10px 20px" data-options="closed:true,modal:true,buttons:'#dlg-buttons',modal:true" >
+   			<form id="fmMenuInfo" method="post">
+		         <table cellspacing="5px">
+					<p><input type="hidden" id="mn_id" name="mn_id" /></p>
+					<p><input type="hidden" id="mn_parent" name="mn_parent" /></p>
+					<tr>
+						<td height="35px">菜单名称：</td>
+					    <td><input type="text" id="mn_menuName" name="mn_menuName" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>菜单图标：</td>
+					    <td><input type="text" id="mn_iconCls" name="mn_iconCls" class="easyui-validatebox" data-options="required:true" value="icon-man"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>菜单路径：</td>
+					    <td><input type="text" id="mn_path" name="mn_path" class="easyui-validatebox" placeholder="子节点，必须输入路径..."/></td>
+					 </tr>
+					<tr height="35px">
+						<td>备注：</td>
+						<td>
+					    	<textarea rows="7" cols="50" name="mn_remark" id="mn_remark"></textarea>
+					    </td>
+					</tr>
+				</table>
+			</form>
+		</div>
+        <!-- 新增菜单弹框 END -->
+        <!-- 新增菜单弹框中的按钮 START -->
+        <div id="dlg-buttons">
+	      <a href="javascript:saveMenuInfo()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+	      <a href="javascript:closeMenuInfoDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+		</div> 
+        <!-- 新增菜单弹框中的按钮 END -->
+        <script type="text/javascript" src="../gbmjs/menuInfoManager.js"></script>
+	</body>
+</html>

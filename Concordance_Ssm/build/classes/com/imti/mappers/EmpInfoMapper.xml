@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.EmpInfoDao">
+	<!-- 添加人员表的信息 -->
+	<insert id="addEmpInfo" parameterType="Recycleemployeeinfo">
+	insert into
+		t_recycleemployeeinfo(
+			rem_id,
+			re_id,
+			em_id,
+			rem_obligation,
+			rem_delflag,
+			rem_state,
+			rem_createTime,
+			rem_opt_id,
+			rem_remark
+		) VALUES(
+			#{rem_id},
+			#{re_id},
+			#{em_id},
+			#{rem_obligation},
+			#{rem_delflag},
+			#{rem_state},
+			#{rem_createTime},
+			#{rem_opt_id},
+			#{rem_remark}
+		)
+	</insert>
+	
+	<!-- 删除回收站主表信息的sql语句 -->
+	<update id="deleteEmpInfo" parameterType="Integer">
+		update
+			t_recycleemployeeinfo
+		set
+			rem_delflag = 1
+		where
+			re_id = #{re_id}
+	</update>
+	
+	<!-- 查询所有回收站人员表信息，用于旧数据，可与新数据进行比较 -->
+	<select id="findRecycleEmpInfoByReId" parameterType="Integer" resultType="Recycleemployeeinfo">
+		select
+			rem_id,
+			re_id,
+			em_id,
+			rem_obligation,
+			rem_delflag,
+			rem_state,
+			rem_createTime,
+			rem_opt_id,
+			rem_remark
+		from
+			t_recycleemployeeinfo
+		where
+			rem_id = #{rem_id}
+		and
+			rem_delflag = 0
+	</select>
+	
+	<!-- 删除回收站人员信息表的sql语句 -->
+	<update id="delEmpInfo" parameterType="Integer">
+		update
+			t_recycleemployeeinfo
+		set
+			rem_delflag = 1
+		where
+			rem_id = #{rem_id}
+	</update>
+	
+	<!-- 修改回收站人员信息的sql语句 -->
+	<update id="updEmpInfo" parameterType="Recycleemployeeinfo">
+		update
+			t_recycleemployeeinfo
+		set
+			re_id = #{re_id} ,
+			em_id = #{em_id} ,
+			rem_obligation = #{rem_obligation} ,
+			rem_delflag = #{rem_delflag} ,
+			rem_state = #{rem_state} ,
+			rem_createTime = #{rem_createTime} ,
+			rem_opt_id = #{rem_opt_id} ,
+			rem_remark = #{rem_remark}
+		where
+			rem_id = #{rem_id}
+		and
+			rem_delflag = 0
+	</update>
+</mapper>

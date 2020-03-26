@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.FindDriverPlateNumber">
+
+
+<select id="findDriver" resultType="EmployeeInfo" parameterType="Map">
+select
+    em_id,
+    em_name,
+    em_remark
+ from
+   t_employeeinfo 
+   where 
+       em_delflag=0
+      or
+     em_remark='司机'
+		<if test="searchByName!=null">
+			or em_name like concat('%',#{searchByName},'%')
+		</if>
+
+</select>
+
+<select id="findPlateNumber" resultType="VehicleInfo" parameterType="Map">
+select
+    ve_id,
+    ve_license,
+    ve_remark,
+    ve_firm
+  
+ from
+   t_vehicleinfo  
+   where 
+       ve_delflag=0
+		<if test="searchByName!=null">
+			and ve_license like concat('%',#{searchByName},'%')
+		</if>
+
+</select>
+
+<select id="findState" resultType="VehicleInfo" parameterType="Map">
+select
+    ve_id,
+     ve_type,
+    ve_remark,
+    ve_firm
+ from
+   t_vehicleinfo  
+   where 
+       ve_delflag=0
+		<if test="searchByName!=null">
+			and ve_type like concat('%',#{searchByName},'%')
+		</if>
+
+</select>
+
+</mapper>

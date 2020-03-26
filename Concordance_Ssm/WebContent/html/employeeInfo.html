@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>员工信息</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+		<table class="easyui-datagrid" id="employeeDataGrid" style="width: 100%;height: 100%" data-options="fitColumns:true,
+																		 pagination:true,
+																		 rownumbers:true,
+																		 toolbar:'#tb',
+																		 fit:true,
+																		 fitColumns:true,
+																		 url:'../employeeInfo/findAllEmployeeInfo.action'">
+			<thead>
+				<tr>
+					<th data-options="field:'checkbox',checkbox:true" align="center"></th>
+					<th data-options="field:'em_name',width:100" align="center">姓名</th>
+					<th data-options="field:'em_age',width:100" align="center">年龄</th>
+					<th data-options="field:'em_idCard',width:100" align="center">身份证号</th>
+					<th data-options="field:'em_native',width:100" align="center">籍贯</th>
+					<th data-options="field:'em_location',width:100" align="center">现居住地</th>
+					<th data-options="field:'em_entryTime',width:100" align="center">入职时间</th>
+					<th data-options="field:'em_account',width:100" align="center">用户名</th>
+					<th data-options="field:'em_password',width:100" align="center">密码</th>
+					<th data-options="field:'ro_name',width:100" align="center">角色名称</th>
+					<th data-options="field:'em_phone',width:100" align="center">手机号码</th>
+					<th data-options="field:'em_email',width:100" align="center">邮箱</th>
+					<th data-options="field:'em_remark',width:100" align="center">备注</th>
+				</tr>
+			</thead>															 
+		</table>
+		
+		<div id="tb" style="padding:0 30px;width:100%;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newEmployeeInfo()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+	            <a href="javascript:updateEmployeeInfo()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:deleteEmployeeInfo()" class="easyui-linkbutton">删除</a>
+	        	<div class="conditions" style="float:right;margin-right: 20px">
+		          	<span class="con-span">用户名: </span>
+		          	<input class="easyui-textbox" type="text" name="searchByName"  id="searchByName" style="width:166px;height:35px;line-height:35px;"></input>
+		          	 <a href="javascript:searchEmployeeInfoByName()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	       		</div>
+	        </div>
+        </div>
+        
+        <!-- 员工信息表单Dialog START -->
+        <div id="dlgEmployeeInfo" class="easyui-dialog"style="width: 570px;height: 460px;padding: 10px 20px" data-options="closed:true,modal:true,buttons:'#dlg-buttons',modal:true" >
+   			<form id="fmEmployeeInfo" method="post">
+		         <table cellspacing="5px">
+					<p><input type="hidden" id="em_id" name="em_id" /></p>
+					<tr>
+						<td height="35px">姓名：</td>
+					    <td><input type="text" id="em_name" name="em_name" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>年龄：</td>
+					    <td><input type="text" id="em_age" name="em_age" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>身份证号：</td>
+					    <td><input type="text" id="em_idCard" name="em_idCard" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>籍贯：</td>
+					    <td><input type="text" id="em_native" name="em_native" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>现居住地：</td>
+					    <td><input type="text" id="em_location" name="em_location" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>入职时间：</td>
+					    <td><input type="text" id="em_entryTime" name="em_entryTime" class="easyui-datebox" data-options="required:true"/></td>
+					 </tr>
+					<tr height="35px">
+						<td>用户名：</td>
+					    <td><input type="text" id="em_account" name="em_account" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>密码：</td>
+					    <td><input type="password" id="em_password" name="em_password" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>手机号：</td>
+					    <td><input type="text" id="em_phone" name="em_phone" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>邮箱：</td>
+					    <td><input type="text" id="em_email" name="em_email" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>角色名称：</td>
+					    <td>
+							 <input type="hidden" id="ro_id" name="ro_id"/>
+							 <input type="text" id="ro_name" name="ro_name" class="easyui-validatebox" data-options="required:true" readonly="readonly"/>
+						</td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td colspan="2">
+							<a href="javascript:openRoleChooseDialog()" class="easyui-linkbutton">选择角色</a>
+						</td>
+					</tr>
+					<tr height="35px">
+						<td>备注：</td>
+						<td colspan="4">
+					    	<textarea rows="7" cols="50" name="em_remark" id="em_remark"></textarea>
+					    </td>
+					</tr>
+					</table>
+					</form>
+	</div>
+	<!-- 员工信息表单Dialog END -->
+	<!-- 员工信息表单按钮Dialog START -->
+	<div id="dlg-buttons">
+	      <a href="javascript:saveEmployeeInfo()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+	      <a href="javascript:closeEmployeeInfoDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div> 
+
+	<!-- 员工信息表单按钮Dialog END -->
+	
+	<!-- 角色信息Dialog START -->
+	<div id="dlgRoleInfo" class="easyui-dialog" data-options="iconCls:'icon-search',closed:true,buttons:'#dlg2-buttons'"  style="width: 500px;height: 480px;padding: 10px 20px">
+	       <div style="height: 40px" align="center">
+				角色名称：<input type="text" id="s_roleName" name="s_roleName" onkeydown="if(event.keyCode==13) searchRole()"/>
+		  		<a href="javascript:searchRoles()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+		   </div>
+			<div style="height: 350px;">
+				<table id="dgRoleInfo" title="查询结果" class="easyui-datagrid" data-options="fitColumns:true,pagination:true,rownumbers:true,fit:true,singleSelect:true,url:'../roleInfo/findAllRole.action'">
+				    <thead>
+					<tr>
+						  <th data-options="field:'checkbox',checkbox:true,width:50" align="center">编号</th>
+						  <th data-options="field:'ro_id',width:50" align="center">编号</th>
+					      <th data-options="field:'ro_name',width:50" align="center">角色名称</th>
+					      <th data-options="field:'ro_remark',width:50" align="center">备注</th>
+					 </tr>
+				     </thead>
+				 </table>
+			</div>
+			</div>
+			<!-- 角色信息Dialog END -->
+			<!-- 角色信息Dialog按钮 START -->
+			<div id="dlg2-buttons">
+			      <a href="javascript:chooseRole()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+			      <a href="javascript:closeRoleDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+			</div>
+			<!-- 角色信息Dialog按钮 END -->
+        <script type="text/javascript" src="../gbmjs/employeeManager.js"></script>
+        <script type="text/javascript" src="../gbmjs/roleInfoManager.js"></script>
+	</body>
+</html>

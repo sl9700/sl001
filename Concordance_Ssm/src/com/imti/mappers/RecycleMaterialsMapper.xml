@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.RecycleMaterialsDao">
+	<!-- 查询与回收站id关联的子表 -->
+	<select id="findRecycleMaterialsInfoByReId" parameterType="Integer" resultType="Recyclematerials">
+		select
+			rm.rm_id,
+			rm.re_id,
+			re.re_name,
+			rm.mm_id,
+			mm.mm_name,
+			rm.rm_total,
+			rm.rm_loss,
+			rm.rm_delflag,
+			rm.rm_state,
+			rm.rm_createTime,
+			rm.rm_opt_id,
+			rm.rm_remark
+		from
+			t_recyclematerials rm
+		inner join
+			t_recycle re
+		on
+			rm.re_id = re.re_id
+		inner join
+			t_materialsmanage mm
+		on
+			rm.mm_id = mm.mm_id
+		where
+			rm.rm_delflag = 0
+		and
+			rm.re_id = #{re_id}
+	</select>
+</mapper>

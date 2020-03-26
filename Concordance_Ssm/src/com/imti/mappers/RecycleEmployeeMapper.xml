@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.RecycleEmployeeDao">
+	<!-- 查询与回收站id关联的子表 -->
+	<select id="findRecycleEmployeeInfoByReId" parameterType="Integer" resultType="Recycleemployeeinfo">
+		select
+			rei.rem_id,
+			rei.re_id,
+			re.re_name,
+			rei.em_id,
+			em.em_name,
+			rei.rem_obligation,
+			rei.rem_delflag,
+			rei.rem_state,
+			rei.rem_createTime,
+			rei.rem_opt_id,
+			rei.rem_remark
+		from
+			t_recycleemployeeinfo rei
+		inner join
+			t_recycle re
+		on
+			rei.re_id = re.re_id
+		inner join
+			t_employeeinfo em
+		on
+			rei.em_id = em.em_id
+		where
+			rei.rem_delflag = 0
+		and
+			rei.re_id = #{re_id}
+	</select>
+</mapper>

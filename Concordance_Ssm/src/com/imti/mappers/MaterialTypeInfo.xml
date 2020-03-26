@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.MaterialTypeDao">
+	<!-- 物资类型查询所有信息 -->
+	<select id="findAllmaterialType" parameterType="Map"  resultType="MaterialType">
+		select
+			mt_id,
+			mt_name,
+			mt_delflag,
+			mt_state,
+			mt_createTime,
+			mt_opt_id,
+			mt_remark
+		from
+			t_materialtype
+		where
+			mt_delflag=0
+		<if test="mt_names !=null and mt_names !=''">
+			and mt_name like concat('%',#{mt_names},'%')
+		</if>
+			order by mt_createTime desc
+			limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	<!-- 物资管理查询总条数 -->
+	<select id="findAllmaterialTypeCount" parameterType="Map" resultType="Integer">
+		select
+			count(mt_name)
+		from
+			t_materialtype
+		where
+			mt_delflag=0
+		<if test="mt_names !=null and mt_names !=''">
+			and mt_name like concat('%',#{mt_names},'%')
+		</if>
+	</select>
+	<!-- 物资类型新增 -->
+	<insert id="newmaterialTypeInfo" parameterType="MaterialType" >
+		insert into
+			t_materialtype(
+			mt_name,
+			mt_delflag,
+			mt_state,
+			mt_createTime,
+			mt_opt_id,
+			mt_remark
+			)
+			values(
+			#{mt_name},
+			#{mt_delflag},
+			#{mt_state},
+			#{mt_createTime},
+			#{mt_opt_id},
+			#{mt_remark}
+			)
+	</insert>
+	<update id="updatematerialType" parameterType="MaterialType">
+		update
+			t_materialtype
+		set
+			mt_name=#{mt_name},
+			mt_remark=#{mt_remark}
+		where
+			mt_delflag=0
+		and
+			mt_id=#{mt_id}
+	</update>
+	<update id="deletematerialTypeInfo" parameterType="Integer">
+		update
+			t_materialtype
+		set
+			mt_delflag=1
+		where
+			mt_delflag=0
+		and
+			mt_id=#{mt_id}
+	</update>
+</mapper>

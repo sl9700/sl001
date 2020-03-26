@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.CarTransInfoDao">
+
+	<select id="findAllCartsInfo"  resultType="VehicleDispach"  parameterType="Map">
+	SELECT
+	    tve.ve_id,
+	    tve.em_id,
+		tve.vd_id,
+		tve.vd_borrowTime,
+		tve.vd_returnTime,
+		tve.vd_useCompany,
+		tveh.ve_firm,
+		tve.vd_state,
+		tve.vd_remark,
+		tem.em_name,
+		tveh.ve_license
+		FROM
+			t_vehicledispach tve
+		LEFT JOIN
+			t_vehicleinfo tveh
+		ON tveh.ve_id=tve.ve_id
+		LEFT JOIN
+			t_employeeinfo tem
+		ON tem.em_id=tve.em_id
+		WHERE
+			 tve.vd_delflag=0
+		<if test="searchByName!=null">
+			and tve.vd_useCompany like concat('%',#{searchByName},'%')
+		</if>
+		order by tve.vd_returnTime desc
+			limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	
+	<select id="findAllCartsInfoCount"  resultType="Integer"  parameterType="Map">
+		select
+			count(*)
+		from
+			t_vehicledispach
+		where	
+			vd_delflag=0
+		<if test="searchByName!=null">
+			and vd_useCompany like concat('%',#{searchByName},'%')
+		</if>	
+		order by vd_returnTime desc
+	</select>
+	
+	<insert id="addCartsInfo"  parameterType="VehicleDispach">
+		insert into
+			t_vehicledispach(
+			vd_id,
+			vd_borrowTime,
+            vd_returnTime,
+            vd_useCompany,
+		    vd_state,
+		    ve_id,
+		    em_id,
+		    vd_delflag,
+		    vd_company,
+		    vd_remark,
+		    vd_opt_id
+			)values(
+			 #{vd_id},
+			 #{vd_returnTime},
+			 #{vd_borrowTime},
+			 #{vd_useCompany},
+			 #{vd_state},
+			 #{ve_id},
+			 #{em_id},
+			 0,
+			 #{ve_firm},
+			 #{vd_remark},
+			 #{vd_opt_id}
+			)
+	</insert>
+	
+	<update id="updateCartsInfo"  parameterType="VehicleDispach">
+	update t_vehicledispach 
+	set 
+	ve_id=#{ve_id},
+	vd_useCompany=#{vd_useCompany},
+	vd_opt_id=#{vd_opt_id},
+	vd_company=#{ve_firm},
+	vd_borrowTime=#{vd_borrowTime},
+	vd_returnTime=#{vd_returnTime},
+	vd_state=#{vd_state},
+	em_id=#{em_id},
+	ve_id=#{ve_id},
+	vd_remark=#{vd_remark}
+	where
+	vd_id=#{vd_id}
+	</update>
+	
+	<update id="deleteEmployeeInfo"  parameterType="Integer">
+		update
+			t_vehicledispach
+		set	
+			vd_delflag=1
+		where
+			vd_id=#{id}
+	</update>
+</mapper> 

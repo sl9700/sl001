@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.CommunityInfoDetailDao">
+	<select id="CommunityInfoDetail" parameterType="Map" resultType="CommunityInfoDetail">
+				SELECT 
+				  cd.cd_id,
+				  co.co_id,
+				  co.co_name,
+				  cd.cd_unit,
+				  cd.cd_unitNumber,
+				  cd.cd_unitLayer,
+				  cd.cd_delflag,
+				  cd.cd_state,
+				  cd.cd_createTime,
+				  cd.cd_opt_id,
+				  cd.cd_remark 
+				FROM
+				  t_communityinfodetail cd 
+				  INNER JOIN t_community co 
+				ON  cd.co_id=co.co_id
+				WHERE cd.cd_delflag = 0 
+				and co.co_delflag = 0
+				ORDER BY cd.cd_createTime DESC 
+			limit #{pageBean.start},#{pageBean.rows} 
+	</select>
+	<select id="findAllCommunityInfoDetailCount" resultType="Integer">
+		SELECT
+		Count(cd_delflag)
+		FROM
+			t_communityinfodetail
+		WHERE
+			cd_delflag=0
+	</select>
+	<update id="updateCommunityInfoDetail" parameterType="CommunityInfoDetail">
+		update
+			t_communityinfodetail
+		set
+			co_id=#{co_id},
+			cd_unit=#{cd_unit},
+			cd_unitNumber=#{cd_unitNumber},
+			cd_unitLayer=#{cd_unitLayer}
+		where
+			cd_delflag=0
+		and
+			cd_id=#{cd_id}
+	</update>
+	<update id="deleteCommunityInfoDetail" parameterType="Integer">
+			update
+				t_communityinfodetail
+			set
+				cd_delflag=1
+			where
+				cd_delflag=0
+		and
+			cd_id=#{cd_id}
+	</update>
+	<insert id="newCommunityInfoDetailDao" parameterType="CommunityInfoDetail">
+			insert into
+				t_communityinfodetail
+				(co_id,
+				cd_delflag,
+				cd_state,
+				cd_opt_id,
+				cd_createTime
+				)
+			values(#{co_id},
+			#{cd_delflag},
+			#{cd_state},
+			#{cd_opt_id},
+			#{cd_createTime}
+			)
+	</insert>
+</mapper>

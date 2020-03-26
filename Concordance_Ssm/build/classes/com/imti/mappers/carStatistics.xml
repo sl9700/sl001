@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imti.dao.CarStatisticsDao">
+	<select id="findAllCartsInfo" resultType="VehicleDispach" parameterType="Map">
+	SELECT
+		tve.vd_id,
+		tve.vd_borrowTime,
+		tve.vd_returnTime,
+		tve.vd_useCompany,
+		tve.vd_company,
+		tve.vd_state,
+		tve.vd_remark,
+		tve.vd_createTime,
+		tve.vd_opt_id,
+		tem.em_name,
+		tveh.ve_license,
+		tveh.ve_type,
+		tveh.ve_capacity
+		FROM
+			t_vehicledispach tve
+		LEFT JOIN
+			t_vehicleinfo tveh
+		ON tveh.ve_id=tve.ve_id
+		LEFT JOIN
+			t_employeeinfo tem
+		ON tem.em_id=tve.em_id
+		WHERE
+			 tve.vd_delflag=0
+		<if test="searchByName!=null">
+			and tem.em_name like concat('%',#{searchByName},'%')
+		</if>
+	  <if test="veType!=null">
+			and tveh.ve_type like concat('%',#{veType},'%')
+		</if>
+		<if test="veLicense!=null">
+			and tveh.ve_license like concat('%',#{veLicense},'%')
+		</if>
+		order by tve.vd_returnTime desc
+			limit #{pageBean.start},#{pageBean.rows}
+	</select>
+	<select id="findAllCartsInfoCount" resultType="Integer" parameterType="Map">
+		select
+			count(*)
+		from
+			t_vehicledispach tve
+		LEFT JOIN
+			t_vehicleinfo tveh
+		ON tveh.ve_id=tve.ve_id
+		LEFT JOIN
+			t_employeeinfo tem
+		ON tem.em_id=tve.em_id
+		WHERE
+			 tve.vd_delflag=0
+		<if test="searchByName!=null">
+			and tem.em_name like concat('%',#{searchByName},'%')
+		</if>
+	  <if test="veType!=null">
+			and tveh.ve_type like concat('%',#{veType},'%')
+		</if>
+		<if test="veLicense!=null">
+			and tveh.ve_license like concat('%',#{veLicense},'%')
+		</if>
+		order by tve.vd_returnTime desc
+	</select>
+	</mapper>

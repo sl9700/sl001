@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>订单管理</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+		<script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+		<!-- 订单管理的表头与按钮 START -->
+		<table class="easyui-datagrid" id="orderDataGrid" style="width: 100%;height: 100%" data-options="fitColumns:true,
+																		 pagination:true,
+																		 rownumbers:true,
+																		 toolbar:'#tb',
+																		 fit:true,
+																		 fitColumns:true,
+																		 url:'../orderInfo/findAllOrderInfo.action'">
+			<thead>
+				<tr>
+					<th data-options="field:'checkbox',checkbox:true" align="center"></th>
+					<th data-options="field:'us_id',width:100" align="center">居民</th>
+					<th data-options="field:'em_id',width:100" align="center">内部人员</th>
+					<th data-options="field:'ve_id',width:100" align="center">车辆</th>
+					<th data-options="field:'rco_ids',width:100" align="center">订单编号</th>
+					<th data-options="field:'rco_type',width:100" align="center">订单类型</th>
+					<th data-options="field:'rco_birthTime',width:100" align="center">订单生成时间</th>
+					<th data-options="field:'rco_accomplishTime',width:100" align="center">订单完成时间</th>
+					<th data-options="field:'rco_name',width:100" align="center">姓名</th>
+					<th data-options="field:'rco_phone',width:100" align="center">联系方式</th>
+					<th data-options="field:'rco_address',width:100" align="center">详细地址</th>
+					<th data-options="field:'rco_rubbishSrc',width:100" align="center">垃圾图片</th>
+					<th data-options="field:'rco_trading',width:100" align="center">交易方式</th>
+					<th data-options="field:'rco_orderTime',width:100" align="center">接单时间</th>
+					<th data-options="field:'rco_garbageWeight',width:100" align="center">回收重量</th>
+					<th data-options="field:'rco_integral',width:100" align="center">交易积分</th>
+					<th data-options="field:'rco_opt_id',width:100" align="center">操作人</th>
+					<th data-options="field:'rco_remark',width:100" align="center">备注</th>
+				</tr>
+			</thead>															 
+		</table>
+		
+		<div id="tb" style="padding:0 30px;width:100%;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newOrderInfo()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+	            <a href="javascript:updateOrderInfo()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:deleteOrderInfo()" class="easyui-linkbutton">删除</a>
+	        	<div class="conditions" style="float:right;margin-right: 20px">
+		          	<span class="con-span">用户名: </span>
+		          	<input class="easyui-textbox" type="text" name="searchByName"  id="searchByName" style="width:166px;height:35px;line-height:35px;"></input>
+		          	 <a href="javascript:searchOrderInfoByName()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	       		</div>
+	        </div>
+        </div>
+        <!-- 订单管理的表头与按钮 END -->
+        
+        <!-- 订单信息Dialog表单 START -->
+        <div id="dlgOrderInfo" class="easyui-dialog"style="width: 570px;height: 460px;padding: 10px 20px" data-options="closed:true,modal:true,buttons:'#dlg-buttons',modal:true" >
+   			<form id="fmOrderInfo" method="post">
+		         <table cellspacing="5px">
+					<p><input type="hidden" id="rco_id" name="rco_id" /></p>
+					<tr>
+						<td height="35px">订单类型：</td>
+					    <td><input type="text" id="rco_type" name="rco_type" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>姓名：</td>
+					    <td><input type="text" id="rco_name" name="rco_name" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>联系方式：</td>
+					    <td><input type="text" id="rco_phone" name="rco_phone" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>详细地址：</td>
+					    <td><input type="text" id="rco_address" name="rco_address" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>垃圾图片：</td>
+					    <td><input type="text" id="rco_rubbishSrc" name="rco_rubbishSrc" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>交易方式：</td>
+					    <td><input type="text" id="rco_trading" name="rco_trading" class="rco_trading" data-options="required:true"/></td>
+					 </tr>
+					<tr height="35px">
+						<td>回收重量：</td>
+					    <td><input type="text" id="rco_garbageWeight" name="rco_garbageWeight" class="easyui-validatebox" data-options="required:true"/></td>
+					    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					    <td>备注：</td>
+					    <td><input type="password" id="rco_remark" name="rco_remark" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					</table>
+					</form>
+	</div>
+	<!-- 订单信息表单Dialog END -->
+	<!-- 订单信息表单按钮Dialog START -->
+	<div id="dlg-buttons">
+	      <a href="javascript:saveOrderInfo()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+	      <a href="javascript:closeOrderInfoDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div>
+    <!-- 订单信息Dialog表单按钮 END -->
+	</body>
+</html>

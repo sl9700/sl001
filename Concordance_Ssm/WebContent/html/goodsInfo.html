@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>物资类型</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+		<table class="easyui-datagrid" id="tendermaterialTypeDataGrid" style="width:100%" data-options="
+																fitColumns:true,
+																pagination:true,
+																rownumbers:true,
+																toolbar:'#tb',
+																fit:true,
+																url:'../materialType/findAllmaterialType.action'">
+			
+			<!-- 物资类型信息datagrid START -->
+			<thead>
+				<tr>	
+						<th data-options="field:'ck',checkbox:true" align="center"></th>
+						<th data-options="field:'mt_id',width:100" align="center">编号</th>
+						<th data-options="field:'mt_name',width:100" align="center">物资类型</th>
+						<th data-options="field:'mt_createTime',width:100" align="center">创建时间</th>
+						<th data-options="field:'mt_remark',width:100" align="center">备注</th>
+				</tr>
+			</thead>
+		</table>
+		<!-- 物资类型信息datagrid END -->
+		<!-- 物资类型按钮datagrid START -->
+		<div id="tb" style="padding:30px;width:100%; height:20px;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newtenderContract()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+	            <a href="javascript:updatetenderContractInfo()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:deletematerialTypeInfo()" class="easyui-linkbutton">删除</a>
+	        	<div class="conditions" style="float:right;margin-right: 20px">
+		          	<span class="con-span">合同名: </span>
+		          	<input class="easyui-textbox" type="text" name="mt_names"  id="mt_names" style="width:166px;height:35px;line-height:35px;"></input>
+		          	 <a href="javascript:searchtenderContractInfoByName()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	       		</div>
+	        </div>
+        </div>
+        <!-- 物资类型按钮datagrid END -->
+        
+         <!-- 物资类型form表单 START-->
+        <div id="dlgmaterialTypeInfo" class="easyui-dialog"style="width: 270px;height: 260px;padding: 10px 20px" data-options="closed:true,modal:true,buttons:'#dlg-buttons'" >
+   			<form id="fmmaterialTypeInfo" method="post">
+		        <input type="hidden" name="mt_id" id="mt_id" />
+						<table>
+							<tr style="line-height: 30px">
+								<td><label>类型：</label></td>
+								<td><input class="easyui-validatebox" type="text"
+								id="mt_name" name="mt_name" data-options="required:true" maxlength="20" width="200px"/></td>
+							</tr>
+							<tr style="line-height: 30px">
+								<td>备注：</td>
+						<td >
+					    	<textarea rows="4" cols="20" name="mt_remark" id="mt_remark"></textarea>
+					    </td>
+							</tr>
+						</table>
+			</form>
+		  		 <!-- 物资类型form表单 END-->
+		  		 <!-- 物资类型form表单按钮 END-->
+				<div id="dlg-buttons">
+				      <a href="javascript:savematerialTypeInfo()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+				      <a href="javascript:closematerialTypeInfoDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+				</div> 
+		</div>
+	 <!-- 物资类型form表单按钮 END-->
+        <script type="text/javascript" src="../gbmjs/goodsInfoManager.js"></script>
+	</body>
+</html>

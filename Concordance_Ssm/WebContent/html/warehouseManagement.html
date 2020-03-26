@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>出库管理</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+		<script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+		<!-- 回收站出入库管理的表头与按钮 START -->
+		<table class="easyui-datagrid" id="wareHouseDataGrid" style="width: 100%;height: 100%" data-options="fitColumns:true,
+																		 pagination:true,
+																		 rownumbers:true,
+																		 toolbar:'#tb',
+																		 fit:true,
+																		 fitColumns:true,
+																		 url:'../wareHouseInfo/findAllWareHouseInfo.action'">
+			<thead>
+				<tr>
+					<th data-options="field:'checkbox',checkbox:true" align="center"></th>
+					<th data-options="field:'rco_ids',width:100" align="center">订单编号</th>
+					<th data-options="field:'re_name',width:100" align="center">回收站</th>
+					<th data-options="field:'pr_entryTime',width:100" align="center">入库时间</th>
+					<th data-options="field:'pr_weight',width:100" align="center">垃圾重量</th>
+					<th data-options="field:'pr_remark',width:100" align="center">备注</th>
+				</tr>
+			</thead>															 
+		</table>
+		
+		<div id="tb" style="padding:0 30px;width:100%;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newWareHouseInfo()" class="easyui-linkbutton" data-options="selected:true">入库</a>
+	            <a href="javascript:updateWareHouseInfo()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:deleteWareHouseInfo()" class="easyui-linkbutton">出库</a>
+	        	<div class="conditions" style="float:right;margin-right: 20px">
+		          	<span class="con-span">订单编号: </span>
+		          	<input class="easyui-textbox" type="text" name="searchByName"  id="searchByName" style="width:166px;height:35px;line-height:35px;"></input>
+		          	 <a href="javascript:searchWareHouseInfoByName()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	       		</div>
+	        </div>
+        </div>
+        <!-- 回收站出入库管理的表头与按钮 END -->
+        
+        <!-- 回收站出入库信息Dialog表单 START -->
+        <div id="dlgwareHouseInfo" class="easyui-dialog"style="width: 570px;height: 460px;padding: 10px 20px" data-options="closed:true,modal:true,buttons:'#dlg-buttons',modal:true" >
+   			<form id="fmwareHouseInfo" method="post">
+		         <table cellspacing="5px">
+					<p><input type="hidden" id="pr_id" name="pr_id" /></p>
+					<tr>
+						<td height="35px">订单编号：</td>
+					    <td><input type="text" id="rco_id" name="rco_id" class="easyui-validatebox" data-options="required:true"/></td>
+					</tr>
+					 <tr height="35px">
+						<td>入库时间：</td>
+					    <td><input type="text" id="pr_entryTime" name="pr_entryTime" class="easyui-datebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>重量：</td>
+					    <td><input type="text" id="pr_weight" name="pr_weight" class="easyui-validatebox" data-options="required:true"/></td>
+					 </tr>
+					 <tr height="35px">
+						<td>回收站：</td>
+					    <td>
+							 <input type="hidden" id="re_id" name="re_id"/>
+							 <input type="text" id="re_name" name="re_name" class="easyui-validatebox" data-options="required:true" readonly="readonly"/>
+						</td>
+						<td>&nbsp;&nbsp;</td>
+						<td colspan="2">
+							<a href="javascript:openRecycleChooseDialog()" class="easyui-linkbutton">选择回收站</a>
+						</td>
+					</tr>
+					 <tr height="35px">
+						<td>备注：</td>
+						<td colspan="4">
+					    	<textarea rows="7" cols="50" name="pr_remark" id="pr_remark"></textarea>
+					    </td>
+					</tr>
+			</table>
+		</form>
+	</div>
+	<!-- 回收站出入库信息表单Dialog END -->
+	<!-- 回收站出入库信息表单按钮Dialog START -->
+	<div id="dlg-buttons">
+	      <a href="javascript:saveWareHouseInfo()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+	      <a href="javascript:closeWareHouseInfoDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div>
+    <!-- 回收站出入库信息Dialog表单按钮 END -->
+    
+    <!-- 回收站信息Dialog START -->
+	<div id="dlgRecycleInfo" class="easyui-dialog" data-options="iconCls:'icon-search',closed:true,buttons:'#dlg2-buttons'"  style="width: 500px;height: 480px;padding: 10px 20px">
+	       <div style="height: 40px" align="center">
+				角色名称：<input type="text" id="r_recycleName" name="r_recycleName" onkeydown="if(event.keyCode==13) searchRole()"/>
+		  		<a href="javascript:searchRecycles()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+		   </div>
+			<div style="height: 350px;">
+				<table id="dgRecycleInfo" title="查询结果" class="easyui-datagrid" data-options="fitColumns:true,pagination:true,rownumbers:true,fit:true,singleSelect:true,url:'../recycle/findAllRecycle.action'">
+				    <thead>
+					<tr>
+						  <th data-options="field:'checkbox',checkbox:true,width:50" align="center">编号</th>
+						  <th data-options="field:'re_id',width:50" align="center">编号</th>
+					      <th data-options="field:'re_name',width:50" align="center">角色名称</th>
+					      <th data-options="field:'re_remark',width:50" align="center">备注</th>
+					 </tr>
+				     </thead>
+				 </table>
+			</div>
+			</div>
+			<!-- 回收站信息Dialog END -->
+			<!-- 回收站信息Dialog按钮 START -->
+			<div id="dlg2-buttons">
+			      <a href="javascript:chooseRecycle()" class="easyui-linkbutton" iconCls="icon-ok">确定</a>
+			      <a href="javascript:closeRecycleDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+			</div>
+			<!-- 回收站信息Dialog按钮 END -->
+    
+    <!-- 导入外部JS样式 -->
+    <script type="text/javascript" src="../gbmjs/warehouseManagementManager.js"></script>
+	</body>
+</html>

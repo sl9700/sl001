@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>角色信息</title>
+		<link href="../css/base.css" rel="stylesheet">
+		<link href="../css/platform.css" rel="stylesheet">
+		<link rel="stylesheet" href="../custom/uimaker/easyui.css">
+		<link rel="stylesheet" href="../custom/uimaker/icon.css">
+		<script type="text/javascript" src="../custom/jquery.min.js"></script>
+	    <script type="text/javascript" src="../custom/jquery.easyui.min.js"></script>
+	    <script type="text/javascript" src="../custom/easyui-lang-zh_CN.js"></script>
+	</head>
+	<body>
+		<table class="easyui-datagrid" id="roleDataGrid" style="width: 100%;height: 100%" data-options="fitColumns:true,
+																		 pagination:true,
+																		 rownumbers:true,
+																		 toolbar:'#tb',
+																		 fit:true,
+																		 <!-- fitColumns:false, -->
+																		 url:'../roleInfo/findAllRole.action'">
+			<thead>
+				<tr>
+					<th data-options="field:'checkbox',checkbox:true" align="center"></th>
+					<th data-options="field:'ro_name',width:100" align="center">角色名</th>
+					<th data-options="field:'ro_menuids',width:100" align="center">权限ID</th>
+					<th data-options="field:'ro_createTime',width:100" align="center">创建时间</th>
+					<th data-options="field:'ro_remark',width:100" align="center">备注</th>
+				</tr>
+			</thead>															 
+		</table>
+		
+		<div id="tb" style="padding:0 30px;width:100%;">
+	        <div class="opt-buttons" style="width:100%;">
+	            <a href="javascript:newRoleInfo()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+	            <a href="javascript:updateRoleInfo()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:deleteRoleInfo()" class="easyui-linkbutton">删除</a>
+	            <a href="javascript:authRoleInfo()" class="easyui-linkbutton">角色授权</a>
+	        	<div class="conditions" style="float:right;margin-right: 20px">
+		          	<span class="con-span">角色名: </span>
+		          	<input class="easyui-textbox" type="text" name="s_roleName"  id="s_roleName" style="width:166px;height:35px;line-height:35px;"></input>
+		          	 <a href="javascript:searchRole()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	       		</div>
+	        </div>
+        </div>
+        
+          <!-- 角色信息表单Dialog START -->
+        <div id="dlgRoleInfo" class="easyui-dialog"style="width: 500px;height: 285px;padding: 10px 20px" data-options="closed:true,modal:true,buttons:'#dlg-buttons',modal:true" >
+   			<form id="fmRoleInfo" method="post">
+		         <table cellspacing="5px">
+					<p><input type="hidden" id="ro_id" name="ro_id" /></p>
+					<tr>
+						<td height="35px">角色名称：</td>
+					    <td><input type="text" id="ro_name" name="ro_name" class="easyui-validatebox" data-options="required:true"/></td>
+					</tr>
+					<tr height="35px">
+						<td>备注：</td>
+						<td>
+					    	<textarea rows="7" cols="50" name="ro_remark" id="ro_remark"></textarea>
+					    </td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<!-- 角色信息表单Dialog END -->
+		<!-- 角色信息表单按钮Dialog START -->
+		<div id="dlg-buttons">
+	      <a href="javascript:saveRoleInfo()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+	      <a href="javascript:closeRoleInfoDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+		</div> 
+		<!-- 角色信息表单按钮Dialog END -->
+		
+		<!-- 菜单信息授权表单 START -->
+		<div id="dlgMenuInfo" class="easyui-dialog" style="width: 300px;height: 450px;padding:10px 20px;" data-options="closed:true,buttons:'#dlgMenuInfo-buttons'">
+			<ul id="tree" class="easyui-tree"></ul>
+		</div>
+		<!-- 菜单信息授权表单 END -->
+		<!-- 菜单信息授权按钮 START -->
+		<div id="dlgMenuInfo-buttons">
+			<a href="javascript:saveAuth()" class="easyui-linkbutton" data-options="iconCls:'icon-ok',plain:true">授权</a>
+			<a href="javascript:closeAuthDialog()" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:true">关闭</a>
+		</div>
+		<!-- 菜单信息授权按钮 END -->
+		
+        <script type="text/javascript" src="../gbmjs/roleInfoManager.js"></script>
+	</body>
+</html>
